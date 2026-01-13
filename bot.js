@@ -9,7 +9,7 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; // Set from your log ID
+const ADMIN_ID = 6674020266; // Your ID from logs
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
 // Initialize SQLite Database
@@ -62,7 +62,7 @@ const texts = {
   bd: {
     label: "🇧🇩 BN",
     welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
-    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রेशन ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
+    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
     menu: { play: "এখনই খেলুন", link: "🔗 অ্যাকাউন্ট লিঙ্ক" }
   },
   id: {
@@ -85,7 +85,7 @@ const texts = {
  * =======================
  */
 
-// INLINE KEYBOARD (Attached to Photo)
+// INLINE KEYBOARD (Attached to Photo - NO Text buttons allowed here)
 function inlineMenu(ctx, user) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
@@ -94,12 +94,13 @@ function inlineMenu(ctx, user) {
   ]);
 }
 
-// REPLY KEYBOARD (Bottom Menu - Required for Phone Verification)
+// REPLY KEYBOARD (Standard bottom menu - Required for Phone/Contact buttons)
 function replyMenu(user) {
   const buttons = [];
   if (!user.phone) {
     buttons.push([Markup.button.contactRequest("📱 Verify Phone Number")]);
   }
+  // 3-column abbreviated grid for languages
   buttons.push(["🇺🇸 EN", "🇨🇳 ZH", "🇹🇭 TH"]);
   buttons.push(["🇮🇳 HI", "🇧🇩 BN", "🇮🇩 ID", "🇻🇳 VI"]);
   return Markup.keyboard(buttons).resize();
@@ -136,7 +137,7 @@ async function sendWelcome(ctx) {
       parse_mode: 'HTML', 
       ...inlineMenu(ctx, user) 
     });
-    // Send separate reply to avoid inline button errors
+    // Send separate reply keyboard to avoid the 400 Bad Request error
     await ctx.reply("Select a language or verify your phone below 👇", replyMenu(user));
   } catch (err) {
     console.error("❌ Send Error:", err.message);
@@ -169,7 +170,7 @@ bot.on('text', async (ctx) => {
     // Handle Language buttons from reply keyboard
     const langEntry = Object.entries(texts).find(([code, val]) => val.label === text);
     if (langEntry) {
-        await ctx.reply(`Language updated to ${text}`);
+        await ctx.reply(`Language selected: ${text}`);
         return sendWelcome(ctx);
     }
 });
@@ -183,4 +184,4 @@ bot.command('admin_report', (ctx) => {
     ctx.reply(report, { parse_mode: 'HTML' });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Bot Online with Fixed Keyboards"));
+bot.launch().then(() => console.log("✅ Nova88 Bot Online and Fixed"));
