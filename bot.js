@@ -10,6 +10,7 @@ const Database = require('better-sqlite3');
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = 6674020266; // Your ID from the logs
+
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
 // Initialize SQLite Database
@@ -24,69 +25,34 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-STABLE-011-FINAL";
+const BOT_VERSION = "DB-STABLE-012-FINAL";
 
 const bot = new Telegraf(BOT_TOKEN);
 const userState = new Map(); 
 
 /**
  * =======================
- * 2) LATEST LANGUAGE PACK (7 Languages)
+ * 2) LATEST LANGUAGE PACK
  * =======================
  */
 const texts = {
-  en: {
-    label: "🇺🇸 EN",
-    welcomeTitle: "🌟 Welcome to Nova88 – Where Winning Never Sleeps! 🌟",
-    welcomeBody: "🎉 Your Adventure Awaits:\n✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support",
-    menu: { play: "PLAY NOW & WIN", link: "🔗 Link Account" }
-  },
-  zh: {
-    label: "🇨🇳 ZH",
-    welcomeTitle: "🌟 欢迎来到 Nova88 — 全天候赢不停！🌟",
-    welcomeBody: "🎉 精彩旅程即刻开启：\n✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服",
-    menu: { play: "立即游戏", link: "🔗 绑定账号" }
-  },
-  th: {
-    label: "🇹🇭 TH",
-    welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 – ชนะได้ตลอด 24 ชม.! 🌟",
-    welcomeBody: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7",
-    menu: { play: "เล่นเลยตอนนี้", link: "🔗 ผูกบัญชี" }
-  },
-  hi: {
-    label: "🇮🇳 HI",
-    welcomeTitle: "🌟 Nova88 में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
-    welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट",
-    menu: { play: "अभी खेलें", link: "🔗 खाता जोड़ें" }
-  },
-  bd: {
-    label: "🇧🇩 BN",
-    welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
-    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
-    menu: { play: "এখনই খেলুন", link: "🔗 অ্যাকাউন্ট লিঙ্ক" }
-  },
-  id: {
-    label: "🇮🇩 ID",
-    welcomeTitle: "🌟 Selamat Datang di Nova88 – Kemenangan Tiada Henti! 🌟",
-    welcomeBody: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7",
-    menu: { play: "Main Sekarang", link: "🔗 Hubungkan Akun" }
-  },
-  vi: {
-    label: "🇻🇳 VI",
-    welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
-    welcomeBody: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7",
-    menu: { play: "Chơi Ngay", link: "🔗 Liên kết tài khoản" }
-  }
+  en: { label: "🇺🇸 EN", welcomeTitle: "🌟 Welcome to Nova88 – Where Winning Never Sleeps! 🌟", welcomeBody: "🎉 Your Adventure Awaits:\n✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support", menu: { play: "PLAY NOW & WIN", link: "🔗 Link Account" } },
+  zh: { label: "🇨🇳 ZH", welcomeTitle: "🌟 欢迎来到 Nova88 — 全天候赢不停！🌟", welcomeBody: "🎉 精彩旅程即刻开启：\n✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服", menu: { play: "立即游戏", link: "🔗 绑定账号" } },
+  th: { label: "🇹🇭 TH", welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 – ชนะได้ตลอด 24 ชม.! 🌟", welcomeBody: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7", menu: { play: "เล่นเลยตอนนี้", link: "🔗 ผูกบัญชี" } },
+  hi: { label: "🇮🇳 HI", welcomeTitle: "🌟 Nova88 में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟", welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट", menu: { play: "अभी खेलें", link: "🔗 खाता जोड़ें" } },
+  bd: { label: "🇧🇩 BN", welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟", welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস", menu: { play: "এখনই খেলুন", link: "🔗 অ্যাকাউন্ট লিঙ্ক" } },
+  id: { label: "🇮🇩 ID", welcomeTitle: "🌟 Selamat Datang di Nova88 – Kemenangan Tiada Henti! 🌟", welcomeBody: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7", menu: { play: "Main Sekarang", link: "🔗 Hubungkan Akun" } },
+  vi: { label: "🇻🇳 VI", welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớn Mỗi Ngày! 🌟", welcomeBody: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7", menu: { play: "Chơi Ngay", link: "🔗 Liên kết tài khoản" } }
 };
 
 /**
  * =======================
- * 3) KEYBOARD LOGIC (Fixing 400 Error)
+ * 3) DUAL KEYBOARD LOGIC
  * =======================
  */
 
-// INLINE KEYBOARD (Attached to Photo - NO Text buttons allowed here)
-function inlineMenu(ctx, user) {
+// 1. INLINE KEYBOARD: Attached to the Image (Only URL/WebApp buttons allowed)
+function getInlineKeyboard(ctx, user) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
     [Markup.button.webApp(`🎰 🔥 ${m.play} 🔥 🎰`, GAME_URL)],
@@ -94,8 +60,8 @@ function inlineMenu(ctx, user) {
   ]);
 }
 
-// REPLY KEYBOARD (Standard bottom menu - Required for Phone/Contact buttons)
-function replyMenu(user) {
+// 2. REPLY KEYBOARD: Bottom of screen (Required for Contact/Phone buttons)
+function getReplyKeyboard(user) {
   const buttons = [];
   if (!user.phone) {
     buttons.push([Markup.button.contactRequest("📱 Verify Phone Number")]);
@@ -132,13 +98,14 @@ async function sendWelcome(ctx) {
   const caption = `${t.welcomeTitle}\n\n🆔 Member ID: <b>${user.member_id}</b>\n👤 Web Account: <b>${user.external_username || 'Not Linked'}</b>\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
+    // Send Photo with Inline Keyboard
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption, 
       parse_mode: 'HTML', 
-      ...inlineMenu(ctx, user) 
+      ...getInlineKeyboard(ctx, user) 
     });
-    // Send separate reply keyboard to prevent the 400 Bad Request crash
-    await ctx.reply("Select a language or verify your phone below 👇", replyMenu(user));
+    // Send separate message for the Reply Keyboard (solves 400 Bad Request error)
+    await ctx.reply("Select a language or verify your phone below 👇", getReplyKeyboard(user));
   } catch (err) {
     console.error("❌ Send Error:", err.message);
   }
@@ -148,7 +115,7 @@ bot.start(sendWelcome);
 
 bot.on('contact', async (ctx) => {
     db.prepare('UPDATE users SET phone = ? WHERE telegram_id = ?').run(ctx.message.contact.phone_number, ctx.from.id.toString());
-    await ctx.reply("✅ Phone number verified!");
+    await ctx.reply("✅ Phone number verified!", Markup.removeKeyboard()); 
     await sendWelcome(ctx);
 });
 
@@ -160,6 +127,7 @@ bot.action('link_account', (ctx) => {
 bot.on('text', async (ctx) => {
     const text = ctx.message.text;
     
+    // Handle Username Linking
     if (userState.get(ctx.from.id) === 'AWAITING_USERNAME') {
         db.prepare('UPDATE users SET external_username = ? WHERE telegram_id = ?').run(text, ctx.from.id.toString());
         userState.delete(ctx.from.id);
@@ -167,9 +135,9 @@ bot.on('text', async (ctx) => {
         return sendWelcome(ctx);
     }
 
-    // Handle Language buttons from reply keyboard
-    const langEntry = Object.entries(texts).find(([code, val]) => val.label === text);
-    if (langEntry) {
+    // Handle Language Selection from Reply Keyboard
+    const langKey = Object.keys(texts).find(k => texts[k].label === text);
+    if (langKey) {
         await ctx.reply(`Language selected: ${text}`);
         return sendWelcome(ctx);
     }
@@ -184,8 +152,8 @@ bot.command('admin_report', (ctx) => {
     ctx.reply(report, { parse_mode: 'HTML' });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Database Bot Active: 7 Languages"));
+bot.launch().then(() => console.log("✅ Nova88 Database Bot Online and Fixed"));
 
-// Enable graceful stop
+// Graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
