@@ -121,4 +121,55 @@ function mainMenuKeyboard(ctx) {
     [Markup.button.webApp(m.play, GAME_URL)], 
     [Markup.button.url(m.share, SHARE_URL)],
     [
-      Markup.button.url(m.support,
+      Markup.button.url(m.support, SUPPORT_URL),
+      Markup.button.url(m.referrals, REFERRAL_URL),
+    ],
+    [Markup.button.url(m.rewards, CHANNEL_URL)],
+    ...languageGrid(),
+  ]);
+}
+
+/**
+ * =======================
+ * 4) LOGIC & EVENTS
+ * =======================
+ */
+async function sendWelcome(ctx) {
+  const t = L(ctx);
+  const caption = `${t.welcomeTitle}\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
+
+  try {
+    await ctx.replyWithPhoto(BANNER_FILE, { 
+      caption: caption,
+      parse_mode: 'HTML',
+      ...mainMenuKeyboard(ctx)
+    });
+  } catch (err) {
+    console.error("❌ Telegram API Error:", err.description || err.message); 
+    await ctx.reply(caption, mainMenuKeyboard(ctx));
+  }
+}
+
+bot.start(sendWelcome);
+
+Object.keys(texts).forEach((code) => {
+  bot.action(`lang_${code}`, async (ctx) => {
+    userLang.set(ctx.from.id, code);
+    await ctx.answerCbQuery();
+    try { await ctx.deleteMessage(); } catch (e) {}
+    await sendWelcome(ctx);
+  });
+});
+
+/**
+ * =======================
+ * 5) EXECUTION
+ * =======================
+ */
+(async () => {
+  await bot.launch({ dropPendingUpdates: true });
+  console.log(`✅ Nova88 Bot Active: ${Object.keys(texts).length} Languages`);
+})();
+
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
