@@ -14,14 +14,17 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 )`).run();
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
+const REF_URL = "https://bit.ly/49gE3Xo";
+const SUPPORT_URL = "https://direct.lc.chat/11638088/";
+const REWARDS_URL = "https://t.me/Nova88_events";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-026-MENU-FIX";
+const BOT_VERSION = "DB-LATEST-027-ENHANCED";
 
 const bot = new Telegraf(BOT_TOKEN);
 
 /**
  * =======================
- * 2) LANGUAGE PACK
+ * 2) FULL LANGUAGE PACK
  * =======================
  */
 const texts = {
@@ -29,55 +32,82 @@ const texts = {
     title: "🌟 Welcome to Nova88 Online Casino – Where Winning Never Sleeps! 🌟",
     body: "🎉 Your Adventure Awaits:\n✅ No Registration Required – Jump right in and start playing!\n✅ Instant Deposits & Withdrawals – Enjoy cashing out faster than ever!\n✅ 24/7 Support – We're here for you, day and night!\n\n🗞️ Latest update: @Nova88_News\n🎁 More rewards & promotion: @Nova_Promotion\n\n🔗 Backup URLs:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Customer Support:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 PLAY NOW & WIN 🔥 🎰",
-    switch: "🌐 Switch Language"
+    switch: "🌐 Switch Language",
+    ref: "👥 Referral",
+    live: "🎧 Support",
+    gift: "🎁 Rewards"
   },
   cn: {
     title: "🌟 欢迎来到 Nova88 在线赌场 — 全天候赢不停！🌟",
     body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 享受前所未有的极速提款！\n✅ 24/7 全天客服 – 我们全天候为您服务！\n\n🗞️ 最新动态: @Nova88_News\n🎁 更多奖励与促销: @Nova_Promotion\n\n🔗 备用链接:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 客服支持:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 立即游戏，赢取大奖 🔥 🎰",
-    switch: "🌐 切换语言"
+    switch: "🌐 切换语言",
+    ref: "👥 推荐奖励",
+    live: "🎧 在线客服",
+    gift: "🎁 领取奖励"
   },
   th: {
     title: "🌟 ยินดีต้อนรับสู่ Nova88 คาสิโนออนไลน์ – ชนะได้ตลอด 24 ชม.! 🌟",
     body: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก – เริ่มเล่นได้ทันที!\n✅ ฝาก-ถอนรวดเร็ว – รับเงินไวกว่าที่เคย!\n✅ ซัพพอร์ต 24/7 – เราอยู่เคียงข้างคุณทั้งวันทั้งคืน!\n\n🗞️ อัปเดตล่าสุด: @Nova88_News\n🎁 โปรโมชั่นและรางวัลเพิ่มเติม: @Nova_Promotion\n\n🔗 ลิงก์สำรอง:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 ฝ่ายบริการลูกค้า:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 เล่นเลยตอนนี้และรับรางวัล 🔥 🎰",
-    switch: "🌐 เปลี่ยนภาษา"
+    switch: "🌐 เปลี่ยนภาษา",
+    ref: "👥 แนะนำเพื่อน",
+    live: "🎧 สนับสนุน",
+    gift: "🎁 รับรางวัล"
   },
   hi: {
     title: "🌟 Nova88 ऑनलाइन कैसीनो में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
     body: "🎉 आपका रोमांच शुरू होता है:\n✅ कोई पंजीकरण आवश्यक नहीं – सीधे खेल शुरू करें!\n✅ तत्काल जमा और निकासी – पहले से कहीं तेज़ कैश आउट का आनंद लें!\n✅ 24/7 सहायता – हम आपके लिए दिन-रात यहाँ हैं!\n\n🗞️ नवीनतम अपडेट: @Nova88_News\n🎁 अधिक पुरस्कार और प्रमोशन: @Nova_Promotion\n\n🔗 बैकअप URL:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 ग्राहक सहायता:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 अभी खेलें और जीतें 🔥 🎰",
-    switch: "🌐 भाषा बदलें"
+    switch: "🌐 भाषा बदलें",
+    ref: "👥 रेफरल",
+    live: "🎧 सहायता",
+    gift: "🎁 पुरस्कार"
   },
   bn: {
     title: "🌟 Nova88 অনলাইন ক্যাসিনোতে স্বাগতম – জয় কখনো থামে না! 🌟",
     body: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা – সরাসরি খেলায় যোগ দিন!\n✅ দ্রুত লেনদেন – আগের চেয়ে দ্রুত টাকা তুলুন!\n✅ 24/7 কাস্টমার সার্ভিস – আমরা আপনার জন্য দিনরাত আছি!\n\n🗞️ সর্বশেষ আপডেট: @Nova88_News\n🎁 আরও পুরস্কার এবং অফার: @Nova_Promotion\n\n🔗 ব্যাকআপ লিঙ্ক:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 কাস্টমার সাপোর্ট:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 এখনই খেলুন এবং জিতুন 🔥 🎰",
-    switch: "🌐 ভাষা পরিবর্তন করুন"
+    switch: "🌐 ভাষা পরিবর্তন করুন",
+    ref: "👥 রেফারেল",
+    live: "🎧 সাপোর্ট",
+    gift: "🎁 পুরস্কার"
   },
   id: {
     title: "🌟 Selamat Datang di Kasino Online Nova88 – Kemenangan Tiada Henti! 🌟",
     body: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi – Langsung main sekarang!\n✅ Deposit & WD Instan – Nikmati penarikan lebih cepat!\n✅ Dukungan 24/7 – Kami di sini untuk Anda, siang dan malam!\n\n🗞️ Update terbaru: @Nova88_News\n🎁 Lebih banyak promo: @Nova_Promotion\n\n🔗 URL Cadangan:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Layanan Pelanggan:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 MAIN SEKARANG & MENANG 🔥 🎰",
-    switch: "🌐 Pilih Bahasa"
+    switch: "🌐 Pilih Bahasa",
+    ref: "👥 Referensi",
+    live: "🎧 Dukungan",
+    gift: "🎁 Hadiah"
   },
   vn: {
     title: "🌟 Chào mừng đến với Sòng bạc Trực tuyến Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
     body: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký – Tham gia và chơi ngay!\n✅ Nạp & Rút tức thì – Rút tiền nhanh hơn bao giờ hết!\n✅ Hỗ trợ 24/7 – Chúng tôi luôn bên bạn, ngày và đêm!\n\n🗞️ Cập nhật mới nhất: @Nova88_News\n🎁 Thêm phần thưởng & khuyến mãi: @Nova_Promotion\n\n🔗 URL dự phòng:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Hỗ trợ khách hàng:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
     play: "🎰 🔥 CHƠI NGAY & THẮNG LỚN 🔥 🎰",
-    switch: "🌐 Đổi ngôn ngữ"
+    switch: "🌐 Đổi ngôn ngữ",
+    ref: "👥 Giới thiệu",
+    live: "🎧 Hỗ trợ",
+    gift: "🎁 Thưởng"
   }
 };
 
 /**
  * =======================
- * 3) UI LOGIC 
+ * 3) UI LOGIC
  * =======================
  */
 
 function getCombinedGrid(lang) {
   return Markup.inlineKeyboard([
     [Markup.button.webApp(lang.play, GAME_URL)],
+    // Squeezed 3 buttons into a single row
+    [
+      Markup.button.url(lang.ref, REF_URL),
+      Markup.button.url(lang.live, SUPPORT_URL),
+      Markup.button.url(lang.gift, REWARDS_URL)
+    ],
     [Markup.button.callback(lang.switch, "none")], 
     [
       Markup.button.callback("🇺🇸", "lang_en"), 
@@ -119,11 +149,7 @@ async function sendUI(ctx, langCode = 'en') {
   }
 }
 
-// REGISTER THE COMMAND MENU (Button beside text box)
-bot.telegram.setMyCommands([
-  { command: 'start', description: '🚀 Start Bot / Restart Menu' }
-]);
-
+bot.telegram.setMyCommands([{ command: 'start', description: '🚀 Open Nova88 Menu' }]);
 bot.start((ctx) => sendUI(ctx, 'en'));
 bot.action("none", (ctx) => ctx.answerCbQuery());
 
@@ -139,4 +165,4 @@ Object.keys(texts).forEach((code) => {
   });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 v26 Menu Command Active"));
+bot.launch().then(() => console.log("✅ Nova88 v27 Enhanced Grid Online"));
