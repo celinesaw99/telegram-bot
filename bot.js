@@ -9,10 +9,10 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; // Set to your Telegram ID
+const ADMIN_ID = 6674020266; // Set from your log ID
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-// Initialize Database
+// Initialize SQLite Database
 const db = new Database('nova88_users.db');
 db.prepare(`CREATE TABLE IF NOT EXISTS users (
     telegram_id TEXT PRIMARY KEY,
@@ -24,7 +24,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-REPORT-010-FINAL";
+const BOT_VERSION = "DB-REPORT-010-FIXED";
 
 const bot = new Telegraf(BOT_TOKEN);
 const userState = new Map(); 
@@ -62,7 +62,7 @@ const texts = {
   bd: {
     label: "🇧🇩 BN",
     welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
-    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
+    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রेशन ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
     menu: { play: "এখনই খেলুন", link: "🔗 অ্যাকাউন্ট লিঙ্ক" }
   },
   id: {
@@ -85,7 +85,7 @@ const texts = {
  * =======================
  */
 
-// Primary CTA attached to Photo
+// INLINE KEYBOARD (Attached to Photo)
 function inlineMenu(ctx, user) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
@@ -94,7 +94,7 @@ function inlineMenu(ctx, user) {
   ]);
 }
 
-// Bottom Menu for Phone & Languages (Prevents Crash)
+// REPLY KEYBOARD (Bottom Menu - Required for Phone Verification)
 function replyMenu(user) {
   const buttons = [];
   if (!user.phone) {
@@ -136,6 +136,7 @@ async function sendWelcome(ctx) {
       parse_mode: 'HTML', 
       ...inlineMenu(ctx, user) 
     });
+    // Send separate reply to avoid inline button errors
     await ctx.reply("Select a language or verify your phone below 👇", replyMenu(user));
   } catch (err) {
     console.error("❌ Send Error:", err.message);
@@ -168,8 +169,6 @@ bot.on('text', async (ctx) => {
     // Handle Language buttons from reply keyboard
     const langEntry = Object.entries(texts).find(([code, val]) => val.label === text);
     if (langEntry) {
-        // In this simple version, language is detected by browser, 
-        // but we show the confirmation message.
         await ctx.reply(`Language updated to ${text}`);
         return sendWelcome(ctx);
     }
@@ -177,10 +176,11 @@ bot.on('text', async (ctx) => {
 
 bot.command('admin_report', (ctx) => {
     if (ctx.from.id !== ADMIN_ID) return ctx.reply("⛔ Access Denied.");
+    const total = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
     const users = db.prepare('SELECT * FROM users ORDER BY join_date DESC LIMIT 5').all();
-    let report = `📊 <b>Nova88 Admin Report</b>\n\nLatest Users:`;
+    let report = `📊 <b>Nova88 Admin Report</b>\n\nTotal Users: ${total}\n\nLatest Users:`;
     users.forEach(u => report += `\n🆔 ${u.member_id} | 📱 ${u.phone || '❌'} | 👤 ${u.external_username || '❌'}`);
     ctx.reply(report, { parse_mode: 'HTML' });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Bot Online with Latest Script"));
+bot.launch().then(() => console.log("✅ Nova88 Bot Online with Fixed Keyboards"));
