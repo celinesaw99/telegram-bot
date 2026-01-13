@@ -23,7 +23,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
     join_date DATETIME DEFAULT CURRENT_TIMESTAMP
 )`).run();
 
-const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
+const GAME_URL = "https:m.nova8805.net/en?affCode=21093&view=h5";
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
 const REWARDS_URL = "https://t.me/Nova88_events";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
