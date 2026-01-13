@@ -78,7 +78,7 @@ function languageGrid() {
 function mainMenuKeyboard(ctx) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
-    [Markup.button.webApp(m.play, { url: GAME_URL })],
+    [Markup.button.webApp(m.play, GAME_URL)], // Use correct URL variables
     [Markup.button.url(m.share, SHARE_URL)],
     [
       Markup.button.url(m.support, SUPPORT_URL),
@@ -99,18 +99,18 @@ async function sendWelcome(ctx) {
   const caption = `${t.welcomeTitle}\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
-    // You must pass the caption and buttons in one 'extra' object
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption,
-      parse_mode: 'HTML',
-      ...mainMenuKeyboard(ctx) // This inserts your buttons correctly
+      parse_mode: 'HTML', // Allows bold/links in caption
+      ...mainMenuKeyboard(ctx) // Spreads the markup into the extra options
     });
   } catch (err) {
-    // If the photo or keyboard fails, it will log the EXACT error here
-    console.error("❌ Telegram Error:", err.description || err.message);
+    // This will help you see if a URL is broken in your logs
+    console.error("❌ Keyboard Error Details:", err.description); 
     await ctx.reply(caption, mainMenuKeyboard(ctx));
   }
 }
+
 bot.start(sendWelcome);
 
 Object.keys(texts).forEach((code) => {
