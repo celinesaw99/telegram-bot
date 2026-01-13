@@ -10,29 +10,27 @@ const path = require("path");
 const BOT_TOKEN = process.env.BOT_TOKEN;
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-// Update these URLs with your actual links
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const REFERRAL_URL = "https://m.nova88805.net/cs/join?AffId=6bl3wx9q";
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
 const CHANNEL_URL = "https://t.me/Nova_Promotion";
-const BOT_USERNAME = "Nova88OfficialBot"; // Change to your actual username
+const BOT_USERNAME = "Nova88OfficialBot"; 
 
-// Sharing Logic
 const SHARE_TEXT = encodeURIComponent("Join me on Nova88! Instant withdrawals and huge rewards! 🎰");
 const SHARE_URL = `https://t.me/share/url?url=https://t.me/${BOT_USERNAME}&text=${SHARE_TEXT}`;
 
-// Image Path
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
 
 const bot = new Telegraf(BOT_TOKEN);
-const BOT_VERSION = "VPS-2026-01-13-AUTO-LANG-GRID-005";
+const BOT_VERSION = "VPS-2026-01-13-AUTO-LANG-GRID-006";
+const DEFAULT_LANG = "en";
+const userLang = new Map();
 
 /**
  * =======================
  * 2) FULL LANGUAGE PACK
  * =======================
  */
-
 const texts = {
   en: {
     flag: "🇺🇸", name: "English",
@@ -94,39 +92,7 @@ const texts = {
 
 /**
  * =======================
- * 4) KEYBOARD (Optimized for 7 Languages)
- * =======================
- */
-function languageKeyboardRows() {
-  const order = ["en", "zh", "th", "hi", "bd", "id", "vi"];
-  const rows = [];
-  for (let i = 0; i < order.length; i += 2) {
-    const chunk = order.slice(i, i + 2).map(c => 
-      Markup.button.callback(`${texts[c].flag} ${texts[c].name}`, `lang_${c}`)
-    );
-    rows.push(chunk);
-  }
-  return rows;
-}
-
-function mainMenuKeyboard(ctx) {
-  const m = L(ctx).menu;
-  return Markup.inlineKeyboard([
-    // Fixed: WebApp buttons must receive the URL directly as a string or a specific object format
-    [Markup.button.webApp(m.play, GAME_URL)], 
-    [Markup.button.url(m.share, SHARE_URL)],
-    [
-      Markup.button.url(m.support, SUPPORT_URL),
-      Markup.button.url(m.referrals, REFERRAL_URL),
-    ],
-    [Markup.button.url(m.rewards, CHANNEL_URL)],
-    ...languageKeyboardRows(),
-  ]);
-}
-
-/**
- * =======================
- * 3) HELPERS (Auto-Detect)
+ * 3) HELPERS & KEYBOARDS
  * =======================
  */
 function getLang(ctx) {
@@ -137,11 +103,6 @@ function getLang(ctx) {
 
 function L(ctx) { return texts[getLang(ctx)]; }
 
-/**
- * =======================
- * 4) KEYBOARD (Optimized Grid)
- * =======================
- */
 function languageGrid() {
   const codes = Object.keys(texts);
   const rows = [];
@@ -157,59 +118,7 @@ function languageGrid() {
 function mainMenuKeyboard(ctx) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
-    [Markup.button.webApp(m.play, GAME_URL)], // Use correct URL variables
+    [Markup.button.webApp(m.play, GAME_URL)], 
     [Markup.button.url(m.share, SHARE_URL)],
     [
-      Markup.button.url(m.support, SUPPORT_URL),
-      Markup.button.url(m.referrals, REFERRAL_URL),
-    ],
-    [Markup.button.url(m.rewards, CHANNEL_URL)],
-    ...languageGrid(),
-  ]);
-}
-
-/**
- * =======================
- * 5) LOGIC & EVENTS
- * =======================
- */
-async function sendWelcome(ctx) {
-  const t = L(ctx);
-  const caption = `${t.welcomeTitle}\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
-
-  try {
-    await ctx.replyWithPhoto(BANNER_FILE, { 
-      caption: caption,
-      parse_mode: 'HTML', // Allows bold/links in caption
-      ...mainMenuKeyboard(ctx) // Spreads the markup into the extra options
-    });
-  } catch (err) {
-    // This will help you see if a URL is broken in your logs
-    console.error("❌ Keyboard Error Details:", err.description); 
-    await ctx.reply(caption, mainMenuKeyboard(ctx));
-  }
-}
-
-bot.start(sendWelcome);
-
-Object.keys(texts).forEach((code) => {
-  bot.action(`lang_${code}`, async (ctx) => {
-    userLang.set(ctx.from.id, code);
-    await ctx.answerCbQuery();
-    try { await ctx.deleteMessage(); } catch (e) {}
-    await sendWelcome(ctx);
-  });
-});
-
-/**
- * =======================
- * 6) EXECUTION
- * =======================
- */
-(async () => {
-  await bot.launch({ dropPendingUpdates: true });
-  console.log(`✅ Nova88 Bot Active: ${Object.keys(texts).length} Languages`);
-})();
-
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
+      Markup.button.url(m.support,
