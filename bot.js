@@ -1,525 +1,129 @@
 require("dotenv").config();
 const { Telegraf, Markup } = require("telegraf");
+const path = require("path");
 
 /**
  * =======================
- * 1) CONFIG
+ * 1) CONFIG & PATHS
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-if (!BOT_TOKEN) {
-  throw new Error("❌ BOT_TOKEN is missing. Put BOT_TOKEN=... in .env");
-}
+if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-const GAME_URL = "https://m.nova88106.net/en";
-const REFERRAL_URL = "https://www.nova88mas102.com/join?AffId=x1oa5vws";
-const SUPPORT_URL = "https://t.me/Nova88Support2";
-const GROUP_URL = "https://t.me/nova88my";
-const CHANNEL_URL = "https://t.me/nova88official";
+// Update these URLs with your actual links
+const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
+const REFERRAL_URL = "https://m.nova88805.net/cs/join?AffId=6bl3wx9q";
+const SUPPORT_URL = "https://direct.lc.chat/11638088/";
+const CHANNEL_URL = "https://t.me/Nova_Promotion"; 
+const BOT_USERNAME = "Nova88OfficialBot"; // Change to your actual username
 
-// Local banner file (relative to /opt/telegram-bot)
-const BANNER_FILE = { source: "images/startbanner.jpg" };
+// Sharing Logic
+const SHARE_TEXT = encodeURIComponent("Join me on Nova88! Instant withdrawals and huge rewards! 🎰");
+const SHARE_URL = `https://t.me/share/url?url=https://t.me/${BOT_USERNAME}&text=${SHARE_TEXT}`;
 
-// Create bot AFTER token exists
+// Image Path
+const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
+
 const bot = new Telegraf(BOT_TOKEN);
+const BOT_VERSION = "VPS-2026-01-13-AUTO-LANG-GRID-005";
 
 /**
  * =======================
- * 2) LANGUAGE PACK
+ * 2) FULL LANGUAGE PACK
  * =======================
  */
 const DEFAULT_LANG = "en";
-const userLang = new Map(); // userId -> lang code
+const userLang = new Map();
 
 const texts = {
-  en: {
-    flag: "🇺🇸",
-    name: "English",
-    welcomeTitle: "🔥 Welcome to Nova88 Online Casino 🔥",
-    welcomeBody:
-      "✅ No registration required\n" +
-      "✅ Fast deposit & withdrawal\n" +
-      "✅ 24/7 support",
-    chooseOption: "Please choose an option 👇",
-    langSet: "Your language has been set to English.",
-    menu: {
-      play: "🎮 Play now",
-      referrals: "🎀 Referrals",
-      support: "🤝 Support",
-      promo: "🎁 Promotions",
-      channel: "📣 Channel",
-      group: "👥 Group",
-      back: "⬅ Back to main menu",
-      restart: "↩️ Restart bot",
-    },
-    supportMsg: `
-👩‍💼 Nova88 Support
-
-If you need help with:
-• Bonus / Promotion
-• Account issues
-
-Please contact our support:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *Latest Promotions*
-
-• 150% Welcome Bonus for new players  
-• 10% Daily Reload Bonus  
-• Weekly Cashback up to 8%  
-• Live Casino & Slot Tournaments  
-
-📌 T&C apply. Check full details on website or ask support.
-      `.trim(),
-    },
-  },
-
-  zh: {
-    flag: "🇨🇳",
-    name: "简体中文",
-    welcomeTitle: "🔥 欢迎来到 Nova88 线上娱乐城 🔥",
-    welcomeBody:
-      "✅ 无需注册，无需提供身份证\n" +
-      "✅ 存提款快速、安全\n" +
-      "✅ 24/7 客服为您服务",
-    chooseOption: "请选择操作 👇",
-    langSet: "您的语言已设置为简体中文。",
-    menu: {
-      play: "🎮 立即开始",
-      referrals: "🎀 邀请好友",
-      support: "🤝 在线客服",
-      promo: "🎁 优惠活动",
-      channel: "📣 官方频道",
-      group: "👥 官方群组",
-      back: "⬅ 返回主菜单",
-      restart: "↩️ 重新开始",
-    },
-    supportMsg: `
-👩‍💼 Nova88 客服
-
-如需协助：
-• 红利 / 优惠活动
-• 账户相关问题
-
-请联系在线客服：
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *最新优惠活动*
-
-• 新玩家 150% 欢迎红利  
-• 每日 10% 存送红利  
-• 每周返水高达 8%  
-• 真人 & 老虎机锦标赛  
-
-📌 具体条款请参阅官网或咨询客服。
-      `.trim(),
-    },
-  },
-
-  vi: {
-    flag: "🇻🇳",
-    name: "Tiếng Việt",
-    welcomeTitle: "🔥 Chào mừng đến Nova88 casino online 🔥",
-    welcomeBody:
-      "✅ Không cần đăng ký phức tạp\n" +
-      "✅ Nạp / rút tiền nhanh chóng\n" +
-      "✅ Hỗ trợ 24/7",
-    chooseOption: "Vui lòng chọn chức năng 👇",
-    langSet: "Ngôn ngữ của bạn đã được đặt thành Tiếng Việt.",
-    menu: {
-      play: "🎮 Chơi ngay",
-      referrals: "🎀 Giới thiệu bạn bè",
-      support: "🤝 Hỗ trợ",
-      promo: "🎁 Khuyến mãi",
-      channel: "📣 Kênh chính thức",
-      group: "👥 Nhóm chính thức",
-      back: "⬅ Quay lại menu chính",
-      restart: "↩️ Khởi động lại bot",
-    },
-    supportMsg: `
-👩‍💼 Hỗ trợ Nova88
-
-Nếu bạn cần hỗ trợ:
-• Bonus / Khuyến mãi
-• Vấn đề tài khoản
-
-Vui lòng liên hệ hỗ trợ:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *Khuyến mãi mới nhất*
-
-• Thưởng chào mừng 150% cho thành viên mới  
-• Thưởng nạp lại hằng ngày 10%  
-• Hoàn trả hàng tuần lên đến 8%  
-• Giải đấu Live Casino & Slot  
-
-📌 Điều khoản áp dụng. Xem chi tiết trên web hoặc hỏi hỗ trợ.
-      `.trim(),
-    },
-  },
-
-  hi: {
-    flag: "🇮🇳",
-    name: "हिन्दी",
-    welcomeTitle: "🔥 Nova88 ऑनलाइन कसीनो में आपका स्वागत है 🔥",
-    welcomeBody:
-      "✅ रजिस्ट्रेशन की ज़रूरत नहीं\n" +
-      "✅ तेज जमा और निकासी\n" +
-      "✅ 24/7 ग्राहक सहायता",
-    chooseOption: "कृपया एक विकल्प चुनें 👇",
-    langSet: "आपकी भाषा हिंदी में सेट कर दी गई है।",
-    menu: {
-      play: "🎮 अभी खेलें",
-      referrals: "🎀 रेफ़रल",
-      support: "🤝 सपोर्ट",
-      promo: "🎁 प्रोमोशन",
-      channel: "📣 ऑफ़िशियल चैनल",
-      group: "👥 ऑफ़िशियल ग्रुप",
-      back: "⬅ मुख्य मेनू पर वापस",
-      restart: "↩️ बॉट रीस्टार्ट",
-    },
-    supportMsg: `
-👩‍💼 Nova88 सपोर्ट
-
-अगर आपको मदद चाहिए:
-• बोनस / प्रोमोशन
-• अकाउंट से जुड़ी समस्या
-
-कृपया सपोर्ट से संपर्क करें:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *ताज़ा प्रोमोशन*
-
-• नए खिलाड़ियों के लिए 150% वेलकम बोनस  
-• 10% डेली रीलोड बोनस  
-• साप्ताहिक कैशबैक 8% तक  
-• लाइव कसीनो और स्लॉट टूर्नामेंट  
-
-📌 नियम और शर्तें लागू। विस्तार के लिए वेबसाइट या सपोर्ट से पूछें।
-      `.trim(),
-    },
-  },
-
-  ms: {
-    flag: "🇲🇾",
-    name: "Bahasa Melayu",
-    welcomeTitle: "🔥 Selamat datang ke Nova88 kasino dalam talian 🔥",
-    welcomeBody:
-      "✅ Tiada pendaftaran diperlukan\n" +
-      "✅ Deposit & pengeluaran pantas\n" +
-      "✅ Sokongan 24/7",
-    chooseOption: "Sila pilih pilihan anda 👇",
-    langSet: "Bahasa anda telah ditetapkan ke Bahasa Melayu.",
-    menu: {
-      play: "🎮 Main sekarang",
-      referrals: "🎀 Rujukan",
-      support: "🤝 Sokongan",
-      promo: "🎁 Promosi",
-      channel: "📣 Saluran rasmi",
-      group: "👥 Kumpulan rasmi",
-      back: "⬅ Kembali ke menu utama",
-      restart: "↩️ Mula semula bot",
-    },
-    supportMsg: `
-👩‍💼 Sokongan Nova88
-
-Jika anda perlukan bantuan:
-• Bonus / Promosi
-• Isu akaun
-
-Sila hubungi sokongan:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *Promosi Terkini*
-
-• Bonus Selamat Datang 150% untuk pemain baru  
-• Bonus Reload Harian 10%  
-• Rebat Mingguan sehingga 8%  
-• Tournament Live Casino & Slot  
-
-📌 T&C terpakai. Rujuk laman web atau tanya sokongan.
-      `.trim(),
-    },
-  },
-
-  bd: {
-    flag: "🇧🇩",
-    name: "বাংলা",
-    welcomeTitle: "🔥 Nova88 অনলাইন ক্যাসিনোতে স্বাগতম 🔥",
-    welcomeBody:
-      "✅ কোনো রেজিস্ট্রেশন প্রয়োজন নেই\n" +
-      "✅ দ্রুত ডিপোজিট ও উইথড্র\n" +
-      "✅ 24/7 সাপোর্ট",
-    chooseOption: "অনুগ্রহ করে একটি অপশন নির্বাচন করুন 👇",
-    langSet: "আপনার ভাষা বাংলা সেট করা হয়েছে।",
-    menu: {
-      play: "🎮 এখনই খেলুন",
-      referrals: "🎀 রেফারেল",
-      support: "🤝 সাপোর্ট",
-      promo: "🎁 প্রোমোশন",
-      channel: "📣 অফিসিয়াল চ্যানেল",
-      group: "👥 অফিসিয়াল গ্রুপ",
-      back: "⬅ মূল মেনুতে ফিরুন",
-      restart: "↩️ বট রিস্টার্ট",
-    },
-    supportMsg: `
-👩‍💼 Nova88 সাপোর্ট
-
-যদি আপনার সাহায্য প্রয়োজন হয়:
-• বোনাস / প্রোমোশন
-• অ্যাকাউন্ট সংক্রান্ত সমস্যা
-
-অনুগ্রহ করে সাপোর্টে যোগাযোগ করুন:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *সর্বশেষ প্রোমোশন*
-
-• নতুন খেলোয়াড়দের জন্য 150% ওয়েলকাম বোনাস  
-• 10% ডেইলি রিলোড বোনাস  
-• সাপ্তাহিক ক্যাশব্যাক সর্বোচ্চ 8%  
-• লাইভ ক্যাসিনো ও স্লট টুর্নামেন্ট  
-
-📌 শর্ত প্রযোজ্য। বিস্তারিত জানতে ওয়েবসাইট বা সাপোর্টে জিজ্ঞেস করুন।
-      `.trim(),
-    },
-  },
-
-  id: {
-    flag: "🇮🇩",
-    name: "Bahasa Indonesia",
-    welcomeTitle: "🔥 Selamat datang di Nova88 kasino online 🔥",
-    welcomeBody:
-      "✅ Tidak perlu registrasi rumit\n" +
-      "✅ Deposit & penarikan cepat\n" +
-      "✅ Dukungan 24/7",
-    chooseOption: "Silakan pilih menu 👇",
-    langSet: "Bahasa Anda telah diatur ke Bahasa Indonesia.",
-    menu: {
-      play: "🎮 Main sekarang",
-      referrals: "🎀 Referral",
-      support: "🤝 Support",
-      promo: "🎁 Promo",
-      channel: "📣 Channel resmi",
-      group: "👥 Grup resmi",
-      back: "⬅ Kembali ke menu utama",
-      restart: "↩️ Restart bot",
-    },
-    supportMsg: `
-👩‍💼 Support Nova88
-
-Jika Anda butuh bantuan:
-• Bonus / Promo
-• Masalah akun
-
-Silakan hubungi support:
-    `.trim(),
-    sections: {
-      promo: `
-🎁 *Promo Terbaru*
-
-• Bonus Selamat Datang 150% untuk member baru  
-• Bonus Reload Harian 10%  
-• Cashback Mingguan sampai 8%  
-• Turnamen Live Casino & Slot  
-
-📌 S&K berlaku. Lihat di website atau tanya support.
-      `.trim(),
-    },
-  },
+  en: { flag: "🇺🇸", name: "English", welcomeTitle: "🌟 Welcome to Nova88 Official Bot 🌟", welcomeBody: "✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support", chooseOption: "Please choose an option 👇", langSet: "Language: English", menu: { play: "🎮 Play Now", referrals: "🧑‍🤝‍🧑 Referral", support: "🛃 Support", rewards: "🧧 Rewards", share: "🚀 Share" }},
+  zh: { flag: "🇨🇳", name: "简体中文", welcomeTitle: "🌟 欢迎来到 Nova88 官方机器人 🌟", welcomeBody: "✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服", chooseOption: "请选择操作 👇", langSet: "语言：简体中文", menu: { play: "🎮 立即游戏", referrals: "邀请返佣", support: "在线客服", rewards: "领取奖励", share: "🚀 分享" }},
+  th: { flag: "🇹🇭", name: "ไทย", welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 บอทอย่างเป็นทางการ 🌟", welcomeBody: "✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7", chooseOption: "กรุณาเลือกเมนู 👇", langSet: "ภาษาไทย", menu: { play: "🎮 เล่นเลย", referrals: "แนะนำเพื่อน", support: "ซัพพอร์ต", rewards: "รับรางวัล", share: "🚀 แชร์" }},
+  id: { flag: "🇮🇩", name: "Bahasa Indo", welcomeTitle: "🌟 Selamat Datang di Bot Resmi Nova88 🌟", welcomeBody: "✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7", chooseOption: "Silakan pilih menu 👇", langSet: "Bahasa Indonesia", menu: { play: "🎮 Main Sekarang", referrals: "Referral", support: "Dukungan", rewards: "Hadiah", share: "🚀 Bagikan" }},
+  vi: { flag: "🇻🇳", name: "Tiếng Việt", welcomeTitle: "🌟 Chào mừng đến với Bot Nova88 🌟", welcomeBody: "✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7", chooseOption: "Vui lòng chọn 👇", langSet: "Tiếng Việt", menu: { play: "🎮 Chơi Ngay", referrals: "Giới thiệu", support: "Hỗ trợ", rewards: "Phần thưởng", share: "🚀 Chia sẻ" }},
+  hi: { flag: "🇮🇳", name: "हिन्दी", welcomeTitle: "🌟 Nova88 ऑफिशियल बॉट में स्वागत है 🌟", welcomeBody: "✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट", chooseOption: "विकल्प चुनें 👇", langSet: "हिन्दी", menu: { play: "🎮 अभी खेलें", referrals: "रेफ़रल", support: "सपोर्ट", rewards: "रिवॉर्ड", share: "🚀 शेयर" }},
+  bd: { flag: "🇧🇩", name: "বাংলা", welcomeTitle: "🌟 Nova88 অফিসিয়াল বটে স্বাগতম 🌟", welcomeBody: "✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 সাপোর্ট", chooseOption: "অপশন বেছে নিন 👇", langSet: "বাংলা", menu: { play: "🎮 এখনই খেলুন", referrals: "রেফারেল", support: "সপোর্ট", rewards: "পুরস্কার", share: "🚀 শেয়ার" }}
 };
 
 /**
  * =======================
- * 3) LANGUAGE HELPERS
+ * 3) HELPERS (Auto-Detect)
  * =======================
  */
 function getLang(ctx) {
-  const id = ctx.from?.id;
-  if (!id) return DEFAULT_LANG;
-  return userLang.get(id) || DEFAULT_LANG;
+  if (userLang.has(ctx.from?.id)) return userLang.get(ctx.from.id);
+  const browserLang = ctx.from?.language_code?.split("-")[0];
+  return texts[browserLang] ? browserLang : DEFAULT_LANG;
 }
 
-function L(ctx) {
-  const lang = getLang(ctx);
-  return texts[lang] || texts[DEFAULT_LANG];
-}
+function L(ctx) { return texts[getLang(ctx)]; }
 
 /**
  * =======================
- * 4) KEYBOARDS
+ * 4) KEYBOARD (Optimized Grid)
  * =======================
  */
-function backKeyboard(ctx) {
-  const m = L(ctx).menu;
-  return Markup.inlineKeyboard([[Markup.button.callback(m.back, "menu_main")]]);
-}
-
-function languageKeyboardRows() {
-  const preferredOrder = ["en", "zh", "vi", "hi", "ms", "bd", "id"];
+function languageGrid() {
   const codes = Object.keys(texts);
-
-  codes.sort((a, b) => {
-    const ia = preferredOrder.indexOf(a);
-    const ib = preferredOrder.indexOf(b);
-    if (ia !== -1 && ib !== -1) return ia - ib;
-    if (ia !== -1) return -1;
-    if (ib !== -1) return 1;
-    return a.localeCompare(b);
-  });
-
-  const buttons = codes.map((code) => {
-    const lang = texts[code];
-    const label = `${lang.flag} ${lang.name}`;
-    return Markup.button.callback(label, `lang_${code}`);
-  });
-
-  const perRow = 3; // change to 4 if you want fewer rows
   const rows = [];
-  for (let i = 0; i < buttons.length; i += perRow) {
-    rows.push(buttons.slice(i, i + perRow));
+  for (let i = 0; i < codes.length; i += 2) {
+    const pair = codes.slice(i, i + 2).map(code => 
+      Markup.button.callback(`${texts[code].flag} ${texts[code].name}`, `lang_${code}`)
+    );
+    rows.push(pair);
   }
   return rows;
 }
 
 function mainMenuKeyboard(ctx) {
   const m = L(ctx).menu;
-
-  const baseRows = [
+  return Markup.inlineKeyboard([
     [Markup.button.webApp(m.play, { url: GAME_URL })],
-    [Markup.button.callback(m.promo, "menu_promo")],
-    [Markup.button.callback(m.restart, "menu_restart")],
+    [Markup.button.url(m.share, SHARE_URL)],
     [
       Markup.button.url(m.support, SUPPORT_URL),
       Markup.button.url(m.referrals, REFERRAL_URL),
     ],
-    [
-      Markup.button.url(m.channel, CHANNEL_URL),
-      Markup.button.url(m.group, GROUP_URL),
-    ],
-  ];
-
-  return Markup.inlineKeyboard([...baseRows, ...languageKeyboardRows()]);
+    [Markup.button.url(m.rewards, CHANNEL_URL)],
+    ...languageGrid(),
+  ]);
 }
 
 /**
  * =======================
- * 5) WELCOME / START
+ * 5) LOGIC & EVENTS
  * =======================
  */
 async function sendWelcome(ctx) {
   const t = L(ctx);
-
+  const caption = `${t.welcomeTitle}\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
   try {
-    await ctx.replyWithPhoto(BANNER_FILE, {
-      caption: `${t.welcomeTitle}\n\n${t.welcomeBody}`,
-    });
+    await ctx.replyWithPhoto(BANNER_FILE, { caption });
   } catch (err) {
-    console.error("Banner error:", err);
-    await ctx.reply(`${t.welcomeTitle}\n\n${t.welcomeBody}`);
+    await ctx.reply(caption);
   }
-
   await ctx.reply(t.chooseOption, mainMenuKeyboard(ctx));
 }
 
-/**
- * =======================
- * 6) MENU ACTIONS
- * =======================
- */
-bot.start(async (ctx) => {
-  await sendWelcome(ctx);
-});
+bot.start(sendWelcome);
 
-bot.command("menu", async (ctx) => {
-  const t = L(ctx);
-  await ctx.reply(t.chooseOption, mainMenuKeyboard(ctx));
-});
-
-bot.command("support", (ctx) => {
-  const t = L(ctx);
-  ctx.reply(
-    t.supportMsg,
-    Markup.inlineKeyboard([[Markup.button.url(t.menu.support, SUPPORT_URL)]])
-  );
-});
-
-bot.action("menu_main", async (ctx) => {
-  await ctx.answerCbQuery();
-  const t = L(ctx);
-  await ctx.reply(t.chooseOption, mainMenuKeyboard(ctx));
-});
-
-bot.action("menu_restart", async (ctx) => {
-  await ctx.answerCbQuery();
-  await sendWelcome(ctx);
-});
-
-bot.action("menu_promo", async (ctx) => {
-  await ctx.answerCbQuery();
-  const t = L(ctx);
-  await ctx.reply(t.sections.promo, {
-    parse_mode: "Markdown",
-    ...backKeyboard(ctx),
+Object.keys(texts).forEach((code) => {
+  bot.action(`lang_${code}`, async (ctx) => {
+    userLang.set(ctx.from.id, code);
+    await ctx.answerCbQuery();
+    try { await ctx.deleteMessage(); } catch (e) {}
+    await sendWelcome(ctx);
   });
 });
 
 /**
  * =======================
- * 7) LANGUAGE SWITCH (auto)
- * =======================
- */
-function setLanguage(code) {
-  return async (ctx) => {
-    const lang = texts[code];
-    if (!lang) return;
-
-    userLang.set(ctx.from.id, code);
-    await ctx.answerCbQuery(`${lang.flag} ${lang.name} selected`);
-    await ctx.reply(lang.langSet);
-    await sendWelcome(ctx);
-  };
-}
-
-Object.keys(texts).forEach((code) => {
-  bot.action(`lang_${code}`, setLanguage(code));
-});
-
-/**
- * =======================
- * 8) OPTIONAL: Remove chat menu button
- * =======================
- * If you WANT to remove the bottom-left "menu button", run this once:
- * await bot.telegram.setChatMenuButton(undefined, { type: "default" });
- *
- * If you WANT to set it to your web app (kept here):
- */
-async function setGlobalChatMenuButton() {
-  try {
-    await bot.telegram.setChatMenuButton(undefined, {
-      type: "web_app",
-      text: "🎮 Play now",
-      web_app: { url: GAME_URL },
-    });
-  } catch (err) {
-    console.error("setChatMenuButton error:", err);
-  }
-}
-
-/**
- * =======================
- * 9) START BOT
+ * 6) EXECUTION
  * =======================
  */
 (async () => {
-  await setGlobalChatMenuButton(); // comment this out if you don't want the chat menu button
   await bot.launch({ dropPendingUpdates: true });
-  console.log("✅ Nova88 bot started (auto language buttons)");
+  console.log(`✅ Nova88 Bot Active: ${Object.keys(texts).length} Languages`);
 })();
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
