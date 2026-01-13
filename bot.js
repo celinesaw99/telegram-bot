@@ -9,8 +9,6 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; 
-
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
 const db = new Database('nova88_users.db');
@@ -22,86 +20,73 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-015-FIXED"; // Version update to track changes
+const BOT_VERSION = "DB-LATEST-019-STABLE";
 
 const bot = new Telegraf(BOT_TOKEN);
 
 /**
  * =======================
- * 2) LATEST LANGUAGE PACK
+ * 2) FULL LANGUAGE PACK
  * =======================
  */
 const texts = {
   en: {
     label: "🇺🇸 EN",
-    welcomeTitle: "🌟 Welcome to Nova88 – Where Winning Never Sleeps! 🌟",
-    welcomeBody: "🎉 Your Adventure Awaits:\n✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support",
-    menu: { play: "PLAY NOW & WIN" }
+    title: "🌟 Welcome to Nova88 Online Casino – Where Winning Never Sleeps! 🌟",
+    body: "🎉 Your Adventure Awaits:\n✅ No Registration Required – Jump right in and start playing!\n✅ Instant Deposits & Withdrawals – Enjoy cashing out faster than ever!\n✅ 24/7 Support – We're here for you, day and night!\n\n🗞️ Latest update: @Nova88_News\n🎁 More rewards & promotion: @Nova_Promotion\n\n🔗 Backup URLs:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Customer Support:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 PLAY NOW & WIN 🔥 🎰"
   },
   zh: {
     label: "🇨🇳 ZH",
-    welcomeTitle: "🌟 欢迎来到 Nova88 — 全天候赢不停！🌟",
-    welcomeBody: "🎉 精彩旅程即刻开启：\n✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服",
-    menu: { play: "立即游戏" }
+    title: "🌟 欢迎来到 Nova88 在线赌场 — 全天候赢不停！🌟",
+    body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 享受前所未有的极速提款！\n✅ 24/7 全天客服 – 我们全天候为您服务！\n\n🗞️ 最新动态: @Nova88_News\n🎁 更多奖励与促销: @Nova_Promotion\n\n🔗 备用链接:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 客服支持:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 立即游戏，赢取大奖 🔥 🎰"
   },
   th: {
     label: "🇹🇭 TH",
-    welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 – ชนะได้ตลอด 24 ชม.! 🌟",
-    welcomeBody: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7",
-    menu: { play: "เล่นเลยตอนนี้" }
+    title: "🌟 ยินดีต้อนรับสู่ Nova88 คาสิโนออนไลน์ – ชนะได้ตลอด 24 ชม.! 🌟",
+    body: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก – เริ่มเล่นได้ทันที!\n✅ ฝาก-ถอนรวดเร็ว – รับเงินไวกว่าที่เคย!\n✅ ซัพพอร์ต 24/7 – เราอยู่เคียงข้างคุณทั้งวันทั้งคืน!\n\n🗞️ อัปเดตล่าสุด: @Nova88_News\n🎁 โปรโมชั่นและรางวัลเพิ่มเติม: @Nova_Promotion\n\n🔗 ลิงก์สำรอง:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 ฝ่ายบริการลูกค้า:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 เล่นเลยตอนนี้และรับรางวัล 🔥 🎰"
   },
   hi: {
     label: "🇮🇳 HI",
-    welcomeTitle: "🌟 Nova88 में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
-    welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़ิต और विदड्रॉ\n✅ 24/7 सपोर्ट",
-    menu: { play: "अभी खेलें" }
+    title: "🌟 Nova88 ऑनलाइन कैसीनो में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
+    body: "🎉 आपका रोमांच शुरू होता है:\n✅ कोई पंजीकरण आवश्यक नहीं – सीधे खेल शुरू करें!\n✅ तत्काल जमा और निकासी – पहले से कहीं तेज़ कैश आउट का आनंद लें!\n✅ 24/7 सहायता – हम आपके लिए दिन-रात यहाँ हैं!\n\n🗞️ नवीनतम अपडेट: @Nova88_News\n🎁 अधिक पुरस्कार और प्रमोशन: @Nova_Promotion\n\n🔗 बैकअप URL:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 ग्राहक सहायता:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 अभी खेलें और जीतें 🔥 🎰"
   },
   bd: {
     label: "🇧🇩 BN",
-    welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
-    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
-    menu: { play: "এখনই খেলুন" }
+    title: "🌟 Nova88 অনলাইন ক্যাসিনোতে স্বাগতম – জয় কখনো থামে না! 🌟",
+    body: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা – সরাসরি খেলায় যোগ দিন!\n✅ দ্রুত লেনদেন – আগের চেয়ে দ্রুত টাকা তুলুন!\n✅ 24/7 কাস্টমার সার্ভিস – আমরা আপনার জন্য দিনরাত আছি!\n\n🗞️ সর্বশেষ আপডেট: @Nova88_News\n🎁 আরও পুরস্কার এবং অফার: @Nova_Promotion\n\n🔗 ব্যাকআপ লিঙ্ক:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 কাস্টমার সাপোর্ট:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 এখনই খেলুন এবং জিতুন 🔥 🎰"
   },
   id: {
     label: "🇮🇩 ID",
-    welcomeTitle: "🌟 Selamat Datang di Nova88 – Kemenangan Tiada Henti! 🌟",
-    welcomeBody: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7",
-    menu: { play: "Main Sekarang" }
+    title: "🌟 Selamat Datang di Kasino Online Nova88 – Kemenangan Tiada Henti! 🌟",
+    body: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi – Langsung main sekarang!\n✅ Deposit & WD Instan – Nikmati penarikan lebih cepat!\n✅ Dukungan 24/7 – Kami di sini untuk Anda, siang dan malam!\n\n🗞️ Update terbaru: @Nova88_News\n🎁 Lebih banyak promo: @Nova_Promotion\n\n🔗 URL Cadangan:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Layanan Pelanggan:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 MAIN SEKARANG & MENANG 🔥 🎰"
   },
   vi: {
     label: "🇻🇳 VI",
-    welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
-    welcomeBody: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7",
-    menu: { play: "Chơi Ngay" }
+    title: "🌟 Chào mừng đến với Sòng bạc Trực tuyến Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
+    body: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký – Tham gia và chơi ngay!\n✅ Nạp & Rút tức thì – Rút tiền nhanh hơn bao giờ hết!\n✅ Hỗ trợ 24/7 – Chúng tôi luôn bên bạn, ngày và đêm!\n\n🗞️ Cập nhật mới nhất: @Nova88_News\n🎁 Thêm phần thưởng & khuyến mãi: @Nova_Promotion\n\n🔗 URL dự phòng:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Hỗ trợ khách hàng:\n✅ @Nova88Support2\n✅ @Nova88Support3\n✅ @Nova88Support4",
+    play: "🎰 🔥 CHƠI NGAY & THẮNG LỚN 🔥 🎰"
   }
 };
 
 /**
  * =======================
- * 3) UI LOGIC (CRASH FIX)
+ * 3) UI LOGIC
  * =======================
  */
 
-function L(ctx) {
-  const code = ctx.from?.language_code?.split("-")[0] || "en";
+function getLang(textOrCtx) {
+  if (typeof textOrCtx === 'string') {
+    const key = Object.keys(texts).find(k => texts[k].label === textOrCtx);
+    return texts[key || 'en'];
+  }
+  const code = textOrCtx.from?.language_code?.split("-")[0] || "en";
   return texts[code] || texts.en;
-}
-
-// Fixed getGrid: ONLY URL and WebApp buttons allowed on Inline Keyboard
-function getInlineGrid(ctx) {
-  const m = L(ctx).menu;
-  return Markup.inlineKeyboard([
-    [Markup.button.webApp(`🎰 🔥 ${m.play} 🔥 🎰`, GAME_URL)]
-  ]);
-}
-
-// Reply Keyboard: Standard bottom menu allows text buttons for language
-function getReplyMenu() {
-  return Markup.keyboard([
-    ["🇺🇸 EN", "🇨🇳 ZH", "🇹🇭 TH"],
-    ["🇮🇳 HI", "🇧🇩 BN", "🇮🇩 ID"],
-    ["🇻🇳 VI"]
-  ]).resize();
 }
 
 function getOrCreateUser(tgId) {
@@ -114,31 +99,41 @@ function getOrCreateUser(tgId) {
     return user;
 }
 
-async function sendWelcome(ctx) {
+async function sendUI(ctx, lang) {
   const user = getOrCreateUser(ctx.from.id);
-  const t = L(ctx);
-  const caption = `${t.welcomeTitle}\n\n🆔 Member ID: <b>${user.member_id}</b>\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
+  const caption = `${lang.title}\n\n🆔 Member ID: <b>${user.member_id}</b>\n\n${lang.body}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
-    // 1. Send Banner with safe Inline Button
+    // Photo with Inline Play Button
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption, 
       parse_mode: 'HTML', 
-      ...getInlineGrid(ctx) 
+      ...Markup.inlineKeyboard([[Markup.button.webApp(lang.play, GAME_URL)]]) 
     });
-    // 2. Send Bottom Keyboard separately to avoid the 400 error crash
-    await ctx.reply("Please select your language below 👇", getReplyMenu());
+    
+    // Bottom Reply Keyboard for Languages
+    await ctx.reply("Please select your language below 👇", 
+      Markup.keyboard([
+        ["🇺🇸 EN", "🇨🇳 ZH", "🇹🇭 TH"],
+        ["🇮🇳 HI", "🇧🇩 BN", "🇮🇩 ID"],
+        ["🇻🇳 VI"]
+      ]).resize()
+    );
   } catch (err) {
     console.error("❌ Send Error:", err.message);
   }
 }
 
-bot.start(sendWelcome);
+bot.start((ctx) => sendUI(ctx, getLang(ctx)));
 
 bot.on('text', async (ctx) => {
-  const text = ctx.message.text;
-  const langKey = Object.keys(texts).find(key => texts[key].label === text);
-  if (langKey) await sendWelcome(ctx);
+  const selectedLang = Object.values(texts).find(t => t.label === ctx.message.text);
+  if (selectedLang) {
+    return sendUI(ctx, selectedLang);
+  }
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Stable Bot Active: 7 Languages"));
+bot.launch().then(() => console.log("✅ Nova88 Stable v19 Online"));
+
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
