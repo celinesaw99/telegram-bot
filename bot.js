@@ -9,7 +9,7 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; 
+const ADMIN_IDS = [6674020266, 1382562949, 8469468119, 6256931897, 1264629047 ]; 
 const CHANNEL_USERNAME = "@Nova88_News"; 
 
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
@@ -27,7 +27,6 @@ const GAME_URL = "https://m.nova8805.net/en?affCode=21093&view=h5&platform=mobil
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
 const REWARDS_URL = "https://t.me/Nova88_events";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-034-FULL-STABLE";
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -40,9 +39,9 @@ const texts = {
   en: {
     welcome: "👋 Welcome! To initiate the bot, please join our official channel first:",
     title: "🌟 Welcome to Nova88 Online Casino – Where Winning Never Sleeps! 🌟",
-    body: "🎉 Your Adventure Awaits:\n✅ No Registration Required!\n✅ Instant Deposits & Withdrawals!\n✅ 24/7 Support!\n\n🗞️ Updates: @Nova88_News\n🎁 Promotions: @Nova_Promotion",
+    body: "🎉 Your Adventure Awaits:\n✅ No Registration Required!\n✅ Instant Deposits & Withdrawals!\n\n🗞️ Updates: @Nova88_News\n🎁 Promotions: @Nova_Promotion",
     play: "🎰 🔥 PLAY NOW & WIN 🔥 🎰",
-    shareCTA: "🚀 SHARE & EARN 1% 🚀",
+    shareCTA: "🚀 SHARE & EARN 🚀",
     live: "🎧 Support",
     gift: "🎁 Rewards",
     shareMsg: "Hey! Join me on Nova88. Use my link to get instant rewards: "
@@ -50,9 +49,9 @@ const texts = {
   cn: {
     welcome: "👋 欢迎！在使用机器人之前，请先加入我们的官方频道：",
     title: "🌟 欢迎来到 Nova88 在线赌场 — 全天候赢不停！🌟",
-    body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 极速提款！\n✅ 24/7 全天客服 – 为您服务！\n\n🗞️ 最新动态: @Nova88_News\n🎁 促销奖励: @Nova_Promotion",
+    body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 极速提款！\n\n🗞️ 最新动态: @Nova88_News\n🎁 促销奖励: @Nova_Promotion",
     play: "🎰 🔥 立即游戏，赢取大奖 🔥 🎰",
-    shareCTA: "🚀 分享好友赚 1% 🚀",
+    shareCTA: "🚀 分享好友赚 🚀",
     live: "🎧 在线客服",
     gift: "🎁 领取奖励",
     shareMsg: "嘿！快来加入 Nova88。使用我的链接即可获得即时奖励："
@@ -62,7 +61,7 @@ const texts = {
     title: "🌟 ยินดีต้อนรับสู่ Nova88 คาสิโนออนไลน์ – ชนะได้ตลอด 24 ชม.! 🌟",
     body: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก!\n✅ ฝาก-ถอนรวดเร็ว!\n\n🗞️ อัปเดตล่าสุด: @Nova88_News\n🎁 โปรโมชั่น: @Nova_Promotion",
     play: "🎰 🔥 เล่นเลยตอนนี้และรับรางวัล 🔥 🎰",
-    shareCTA: "🚀 แชร์และรับ 1% 🚀",
+    shareCTA: "🚀 แชร์และรับ 🚀",
     live: "🎧 สนับสนุน",
     gift: "🎁 รับรางวัล",
     shareMsg: "เฮ้! มาร่วมสนุกกับฉันที่ Nova88: "
@@ -72,7 +71,7 @@ const texts = {
     title: "🌟 Nova88 ऑनलाइन कैसीनो में आपका स्वागत है! 🌟",
     body: "🎉 आपका रोमांच शुरू होता है:\n✅ कोई पंजीकरण आवश्यक नहीं!\n✅ तत्काल जमा और निकासी!\n\n🗞️ अपडेट: @Nova88_News\n🎁 पुरस्कार: @Nova_Promotion",
     play: "🎰 🔥 अभी खेलें और जीतें 🔥 🎰",
-    shareCTA: "🚀 साझा करें और 1% कमाएं 🚀",
+    shareCTA: "🚀 साझा करें और कमाएं 🚀",
     live: "🎧 सहायता",
     gift: "🎁 पुरस्कार",
     shareMsg: "अरे! Nova88 पर मेरे साथ जुड़ें: "
@@ -92,7 +91,7 @@ const texts = {
     title: "🌟 Selamat Datang di Kasino Online Nova88! 🌟",
     body: "🎉 Petualangan Dimulai:\n✅ Tanpa Registrasi!\n✅ Deposit & WD Instan!\n\n🗞️ Update: @Nova88_News\n🎁 Promo: @Nova_Promotion",
     play: "🎰 🔥 MAIN SEKARANG & MENANG 🔥 🎰",
-    shareCTA: "🚀 BAGIKAN & DAPATKAN 1% 🚀",
+    shareCTA: "🚀 BAGIKAN & DAPATKAN 🚀",
     live: "🎧 Dukungan",
     gift: "🎁 Hadiah",
     shareMsg: "Hai! Bergabunglah dengan saya di Nova88: "
@@ -102,7 +101,7 @@ const texts = {
     title: "🌟 Chào mừng đến với Sòng bạc Trực tuyến Nova88! 🌟",
     body: "🎉 Hành trình bắt đầu:\n✅ Không cần đăng ký!\n✅ Nạp & Rút tức thì!\n\n🗞️ Cập nhật: @Nova88_News\n🎁 Khuyến mãi: @Nova_Promotion",
     play: "🎰 🔥 CHƠI NGAY & THẮNG LỚN 🔥 🎰",
-    shareCTA: "🚀 CHIA SẺ & NHẬN 1% 🚀",
+    shareCTA: "🚀 CHIA SẺ & NHẬN 🚀",
     live: "🎧 Hỗ trợ",
     gift: "🎁 Thưởng",
     shareMsg: "Chào! Hãy tham gia cùng tôi trên Nova88: "
@@ -111,7 +110,7 @@ const texts = {
 
 /**
  * =======================
- * 3) UI & MEMBERSHIP LOGIC
+ * 3) CORE UI LOGIC
  * =======================
  */
 
@@ -139,8 +138,10 @@ function getCombinedGrid(lang, tgId) {
   const shareUrl = `https://t.me/${bot.botInfo.username}?start=${tgId}`;
   return Markup.inlineKeyboard([
     [Markup.button.webApp(lang.play, GAME_URL)],
-    [Markup.button.switchToChat(lang.shareCTA, `${lang.shareMsg}${shareUrl}`)], // Independent CTA row
+
+    [Markup.button.switchToChat(lang.shareCTA, `${lang.shareMsg}${shareUrl}`)],
     [
+    
       Markup.button.url(lang.live, SUPPORT_URL),
       Markup.button.url(lang.gift, REWARDS_URL)
     ],
@@ -174,7 +175,7 @@ async function sendUI(ctx, langCode = 'en') {
 
 /**
  * =======================
- * 4) COMMANDS & ACTIONS
+ * 4) HANDLERS
  * =======================
  */
 
@@ -194,6 +195,15 @@ bot.start(async (ctx) => {
   return sendUI(ctx, 'en');
 });
 
+bot.command('admin_report', async (ctx) => {
+    if (!ADMIN_IDS.includes(ctx.from.id)) return;
+    try {
+        const total = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
+        await ctx.reply(`📊 **Nova88 Admin Report**\nTotal Users: ${total}`, { parse_mode: 'Markdown' });
+        await ctx.replyWithDocument({ source: './nova88_users.db' }, { caption: "📂 User Database" });
+    } catch (err) { await ctx.reply("❌ Error: " + err.message); }
+});
+
 bot.action("check_again", async (ctx) => {
   const isMember = await checkMembership(ctx);
   if (isMember) {
@@ -211,11 +221,5 @@ bot.action(/lang_(.+)/, async (ctx) => {
   await sendUI(ctx, langCode);
 });
 
-bot.command('admin_report', (ctx) => {
-    if (ctx.from.id !== ADMIN_ID) return;
-    const total = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
-    ctx.reply(`📊 Total Registered Users: ${total}`);
-});
-
 bot.telegram.setMyCommands([{ command: 'start', description: '🚀 Open Nova88 Menu' }]);
-bot.launch().then(() => console.log("✅ Nova88 v34 Full UI & Independent CTA Online"));
+bot.launch().then(() => console.log("✅ Nova88 v36 Online - Multi-Admin & Language Pack Active"));
