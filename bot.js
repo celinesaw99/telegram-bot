@@ -15,7 +15,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-023-STABLE";
+const BOT_VERSION = "DB-LATEST-024-RESTORED";
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -71,14 +71,15 @@ const texts = {
 
 /**
  * =======================
- * 3) UI LOGIC
+ * 3) UI LOGIC (GRID RESTORED)
  * =======================
  */
 
 function getCombinedGrid(lang) {
+  // Restore all rows: Play Now + Instruction + Flags
   return Markup.inlineKeyboard([
     [Markup.button.webApp(lang.play, GAME_URL)],
-    [Markup.button.callback(lang.switch, "none")], // Static instruction button
+    [Markup.button.callback(lang.switch, "none")], 
     [
       Markup.button.callback("🇺🇸", "lang_en"), 
       Markup.button.callback("🇨🇳", "lang_cn"), 
@@ -109,20 +110,19 @@ async function sendUI(ctx, langCode = 'en') {
   const caption = `${lang.title}\n\n🆔 Member ID: <b>${user.member_id}</b>\n\n${lang.body}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
+    // Explicitly sending the inline_keyboard
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption, 
       parse_mode: 'HTML', 
-      ...getCombinedGrid(lang),
-      reply_markup: { remove_keyboard: true } 
+      ...getCombinedGrid(lang)
     });
   } catch (err) {
-    console.error("❌ Send Error:", err.message);
+    console.error("❌ Keyboard Restore Error:", err.message);
   }
 }
 
 bot.start((ctx) => sendUI(ctx, 'en'));
 
-// Callback to ignore the instruction button click
 bot.action("none", (ctx) => ctx.answerCbQuery());
 
 Object.keys(texts).forEach((code) => {
@@ -137,4 +137,4 @@ Object.keys(texts).forEach((code) => {
   });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 v23 Flag Grid Online"));
+bot.launch().then(() => console.log("✅ Nova88 v24 Keyboards Restored"));
