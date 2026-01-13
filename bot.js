@@ -24,14 +24,14 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-REPORT-010-STABLE";
+const BOT_VERSION = "DB-STABLE-011-FINAL";
 
 const bot = new Telegraf(BOT_TOKEN);
 const userState = new Map(); 
 
 /**
  * =======================
- * 2) LATEST LANGUAGE PACK
+ * 2) LATEST LANGUAGE PACK (7 Languages)
  * =======================
  */
 const texts = {
@@ -81,11 +81,11 @@ const texts = {
 
 /**
  * =======================
- * 3) KEYBOARD LOGIC
+ * 3) KEYBOARD LOGIC (Fixing 400 Error)
  * =======================
  */
 
-// INLINE KEYBOARD (Attached to Photo - NO Phone button here to avoid 400 error)
+// INLINE KEYBOARD (Attached to Photo - NO Text buttons allowed here)
 function inlineMenu(ctx, user) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
@@ -94,7 +94,7 @@ function inlineMenu(ctx, user) {
   ]);
 }
 
-// REPLY KEYBOARD (Bottom menu - THE ONLY place allowed for phone verification)
+// REPLY KEYBOARD (Standard bottom menu - Required for Phone/Contact buttons)
 function replyMenu(user) {
   const buttons = [];
   if (!user.phone) {
@@ -137,7 +137,7 @@ async function sendWelcome(ctx) {
       parse_mode: 'HTML', 
       ...inlineMenu(ctx, user) 
     });
-    // Send separate bottom keyboard to fix the 400 Bad Request error
+    // Send separate reply keyboard to prevent the 400 Bad Request crash
     await ctx.reply("Select a language or verify your phone below 👇", replyMenu(user));
   } catch (err) {
     console.error("❌ Send Error:", err.message);
@@ -184,7 +184,8 @@ bot.command('admin_report', (ctx) => {
     ctx.reply(report, { parse_mode: 'HTML' });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Bot Online and Fixed"));
+bot.launch().then(() => console.log("✅ Nova88 Database Bot Active: 7 Languages"));
 
+// Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
