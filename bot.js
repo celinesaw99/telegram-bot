@@ -9,11 +9,11 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; 
+const ADMIN_ID = 6674020266; // Your verified Admin ID
+const CHANNEL_USERNAME = "@Nova88_News"; // Channel for Membership Initiation
 
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-// Initialize Database
 const db = new Database('nova88_users.db');
 db.prepare(`CREATE TABLE IF NOT EXISTS users (
     telegram_id TEXT PRIMARY KEY,
@@ -23,11 +23,12 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
     join_date DATETIME DEFAULT CURRENT_TIMESTAMP
 )`).run();
 
-const GAME_URL = "https:m.nova8805.net/en?affCode=21093&view=h5";
+// Updated GAME_URL with H5 forcing parameter
+const GAME_URL = "https://m.nova8805.net/en?affCode=21093&view=h5"; 
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
 const REWARDS_URL = "https://t.me/Nova88_events";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-031-AUTO-PUSH";
+const BOT_VERSION = "DB-LATEST-032-INITIATE-H5";
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -38,8 +39,9 @@ const bot = new Telegraf(BOT_TOKEN);
  */
 const texts = {
   en: {
+    welcome: "👋 Welcome! To initiate the bot, please join our official channel first:",
     title: "🌟 Welcome to Nova88 Online Casino – Where Winning Never Sleeps! 🌟",
-    body: "🎉 Your Adventure Awaits:\n✅ No Registration Required!\n✅ Instant Deposits & Withdrawals!\n✅ 24/7 Support!\n\n🗞️ Updates: @Nova88_News\n🎁 Promotions: @Nova_Promotion\n\n🔗 Backup URLs:\n🌐 https://bit.ly/4sC7lr6\n🌐 https://bit.ly/4brAgYC\n\n🤝 Support:\n✅ @Nova88Support2 | ✅ @Nova88Support3",
+    body: "🎉 Your Adventure Awaits:\n✅ No Registration Required!\n✅ Instant Deposits & Withdrawals!\n\n🗞️ Updates: @Nova88_News\n🎁 Promotions: @Nova_Promotion",
     play: "🎰 🔥 PLAY NOW & WIN 🔥 🎰",
     switch: "🌐 Switch Language",
     shareCTA: "🚀 SHARE & EARN 1% 🚀",
@@ -48,95 +50,31 @@ const texts = {
     shareMsg: "Hey! Join me on Nova88. Use my link to get instant rewards: "
   },
   cn: {
+    welcome: "👋 欢迎！在使用机器人之前，请先加入我们的官方频道：",
     title: "🌟 欢迎来到 Nova88 在线赌场 — 全天候赢不停！🌟",
-    body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 极速提款！\n✅ 24/7 全天客服 – 为您服务！\n\n🗞️ 最新动态: @Nova88_News\n🎁 促销奖励: @Nova_Promotion",
+    body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 极速提款！\n\n🗞️ 最新动态: @Nova88_News\n🎁 促销奖励: @Nova_Promotion",
     play: "🎰 🔥 立即游戏，赢取大奖 🔥 🎰",
     switch: "🌐 切换语言",
     shareCTA: "🚀 分享好友赚 1% 🚀",
     live: "🎧 在线客服",
     gift: "🎁 领取奖励",
     shareMsg: "嘿！快来加入 Nova88。使用我的链接即可获得即时奖励："
-  },
-  th: {
-    title: "🌟 ยินดีต้อนรับสู่ Nova88 คาสิโนออนไลน์ – ชนะได้ตลอด 24 ชม.! 🌟",
-    body: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก – เริ่มเล่นได้ทันที!\n✅ ฝาก-ถอนรวดเร็ว – รับเงินไวกว่าที่เคย!\n\n🗞️ อัปเดตล่าสุด: @Nova88_News\n🎁 โปรโมชั่น: @Nova_Promotion",
-    play: "🎰 🔥 เล่นเลยตอนนี้และรับรางวัล 🔥 🎰",
-    switch: "🌐 เปลี่ยนภาษา",
-    shareCTA: "🚀 แชร์และรับ 1% 🚀",
-    live: "🎧 สนับสนุน",
-    gift: "🎁 รับรางวัล",
-    shareMsg: "เฮ้! มาร่วมสนุกกับฉันที่ Nova88: "
-  },
-  hi: {
-    title: "🌟 Nova88 ऑनलाइन कैसीनो में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
-    body: "🎉 आपका रोमांच शुरू होता है:\n✅ कोई पंजीकरण आवश्यक नहीं!\n✅ तत्काल जमा और निकासी!\n\n🗞️ अपडेट: @Nova88_News\n🎁 पुरस्कार: @Nova_Promotion",
-    play: "🎰 🔥 अभी खेलें और जीतें 🔥 🎰",
-    switch: "🌐 भाषा बदलें",
-    shareCTA: "🚀 साझा करें और 1% कमाएं 🚀",
-    live: "🎧 सहायता",
-    gift: "🎁 पुरस्कार",
-    shareMsg: "अरे! Nova88 पर मेरे साथ जुड़ें: "
-  },
-  bn: {
-    title: "🌟 Nova88 অনলাইন ক্যাসিনোতে স্বাগতম – জয় কখনো থামে না! 🌟",
-    body: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা!\n✅ দ্রুত লেনদেন!\n\n🗞️ আপডেট: @Nova88_News\n🎁 অফার: @Nova_Promotion",
-    play: "🎰 🔥 এখনই খেলুন এবং জিতুন 🔥 🎰",
-    switch: "🌐 ভাষা পরিবর্তন করুন",
-    shareCTA: "🚀 শেয়ার করুন এবং ১% আয় করুন 🚀",
-    live: "🎧 সাপোর্ট",
-    gift: "🎁 পুরস্কার",
-    shareMsg: "হেই! Nova88-এ আমার সাথে যোগ দিন: "
-  },
-  id: {
-    title: "🌟 Selamat Datang di Kasino Online Nova88 – Kemenangan Tiada Henti! 🌟",
-    body: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi!\n✅ Deposit & WD Instan!\n\n🗞️ Update: @Nova88_News\n🎁 Promo: @Nova_Promotion",
-    play: "🎰 🔥 MAIN SEKARANG & MENANG 🔥 🎰",
-    switch: "🌐 Pilih Bahasa",
-    shareCTA: "🚀 BAGIKAN & DAPATKAN 1% 🚀",
-    live: "🎧 Dukungan",
-    gift: "🎁 Hadiah",
-    shareMsg: "Hai! Bergabunglah dengan saya di Nova88: "
-  },
-  vn: {
-    title: "🌟 Chào mừng đến với Sòng bạc Trực tuyến Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
-    body: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký!\n✅ Nạp & Rút tức thì!\n\n🗞️ Cập nhật: @Nova88_News\n🎁 Khuyến mãi: @Nova_Promotion",
-    play: "🎰 🔥 CHƠI NGAY & THẮNG LỚN 🔥 🎰",
-    switch: "🌐 Đổi ngôn ngữ",
-    shareCTA: "🚀 CHIA SẺ & NHẬN 1% 🚀",
-    live: "🎧 Hỗ trợ",
-    gift: "🎁 Thưởng",
-    shareMsg: "Chào! Hãy tham gia cùng tôi trên Nova88: "
   }
 };
 
 /**
  * =======================
- * 3) UI LOGIC 
+ * 3) UI & MEMBERSHIP LOGIC
  * =======================
  */
 
-function getCombinedGrid(lang, tgId) {
-  const shareUrl = `https://t.me/${bot.botInfo.username}?start=${tgId}`;
-  return Markup.inlineKeyboard([
-    [Markup.button.webApp(lang.play, GAME_URL)],
-    [
-      Markup.button.switchToChat(lang.shareCTA, `${lang.shareMsg}${shareUrl}`), 
-      Markup.button.url(lang.live, SUPPORT_URL),
-      Markup.button.url(lang.gift, REWARDS_URL)
-    ],
-    [Markup.button.callback(lang.switch, "none")], 
-    [
-      Markup.button.callback("🇺🇸", "lang_en"), 
-      Markup.button.callback("🇨🇳", "lang_cn"), 
-      Markup.button.callback("🇹🇭", "lang_th"),
-      Markup.button.callback("🇮🇳", "lang_hi")
-    ],
-    [
-      Markup.button.callback("🇧🇩", "lang_bn"), 
-      Markup.button.callback("🇮🇩", "lang_id"), 
-      Markup.button.callback("🇻🇳", "lang_vn")
-    ]
-  ]);
+async function checkMembership(ctx) {
+  try {
+    const member = await ctx.telegram.getChatMember(CHANNEL_USERNAME, ctx.from.id);
+    return ["member", "administrator", "creator"].includes(member.status);
+  } catch (e) {
+    return true; // Proceed if bot isn't admin in channel
+  }
 }
 
 function getOrCreateUser(tgId, referrerId = null) {
@@ -150,6 +88,23 @@ function getOrCreateUser(tgId, referrerId = null) {
         user = { telegram_id: tgId.toString(), member_id: mid, referral_count: 0 };
     }
     return user;
+}
+
+function getCombinedGrid(lang, tgId) {
+  const shareUrl = `https://t.me/${bot.botInfo.username}?start=${tgId}`;
+  return Markup.inlineKeyboard([
+    [Markup.button.webApp(lang.play, GAME_URL)],
+    [
+      Markup.button.switchToChat(lang.shareCTA, `${lang.shareMsg}${shareUrl}`), 
+      Markup.button.url(lang.live, SUPPORT_URL),
+      Markup.button.url(lang.gift, REWARDS_URL)
+    ],
+    [Markup.button.callback(lang.switch, "none")], 
+    [
+      Markup.button.callback("🇺🇸", "lang_en"), 
+      Markup.button.callback("🇨🇳", "lang_cn")
+    ]
+  ]);
 }
 
 async function sendUI(ctx, langCode = 'en') {
@@ -174,34 +129,46 @@ async function sendUI(ctx, langCode = 'en') {
  * =======================
  */
 
-// This handles the "START" button click
 bot.start(async (ctx) => {
-    const payload = ctx.startPayload;
-    const refId = (payload && payload !== ctx.from.id.toString()) ? payload : null;
-    getOrCreateUser(ctx.from.id, refId);
+  const isMember = await checkMembership(ctx);
+  
+  if (!isMember) {
+    return ctx.reply(texts.en.welcome, 
+      Markup.inlineKeyboard([
+        [Markup.button.url("📢 Join Nova88 News", `https://t.me/Nova88_News`)],
+        [Markup.button.callback("✅ I have joined / 🚩 已加入", "check_again")]
+      ])
+    );
+  }
+
+  const payload = ctx.startPayload;
+  const refId = (payload && payload !== ctx.from.id.toString()) ? payload : null;
+  getOrCreateUser(ctx.from.id, refId);
+  return sendUI(ctx, 'en');
+});
+
+bot.action("check_again", async (ctx) => {
+  const isMember = await checkMembership(ctx);
+  if (isMember) {
+    try { await ctx.deleteMessage(); } catch(e) {}
     return sendUI(ctx, 'en');
+  } else {
+    return ctx.answerCbQuery("❌ Please join @Nova88_News first!", { show_alert: true });
+  }
 });
 
 bot.command('admin_report', (ctx) => {
     if (ctx.from.id !== ADMIN_ID) return;
     const total = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
-    const top = db.prepare('SELECT * FROM users WHERE referral_count > 0 ORDER BY referral_count DESC LIMIT 5').all();
-    let report = `📊 <b>Nova88 Report</b>\nTotal: ${total}\n\n🏆 <b>Top Refs:</b>`;
-    top.forEach(u => report += `\n🆔 ${u.telegram_id} | 👥 ${u.referral_count}`);
-    ctx.reply(report, { parse_mode: 'HTML' });
+    ctx.reply(`📊 Total Users: ${total}`);
 });
 
-bot.action("none", (ctx) => ctx.answerCbQuery());
-
-Object.keys(texts).forEach((code) => {
-  bot.action(`lang_${code}`, async (ctx) => {
-    try {
-      await ctx.answerCbQuery();
-      await ctx.deleteMessage();
-      await sendUI(ctx, code);
-    } catch (e) { await sendUI(ctx, code); }
-  });
+bot.action(/lang_(.+)/, async (ctx) => {
+  const langCode = ctx.match[1];
+  await ctx.answerCbQuery();
+  try { await ctx.deleteMessage(); } catch(e) {}
+  await sendUI(ctx, langCode);
 });
 
 bot.telegram.setMyCommands([{ command: 'start', description: '🚀 Open Nova88 Menu' }]);
-bot.launch().then(() => console.log("✅ Nova88 v31 Online - Auto-Push Fixed"));
+bot.launch().then(() => console.log("✅ Nova88 v32 Initiate & H5 Forced Active"));
