@@ -32,18 +32,97 @@ const BOT_VERSION = "VPS-2026-01-13-AUTO-LANG-GRID-005";
  * 2) FULL LANGUAGE PACK
  * =======================
  */
-const DEFAULT_LANG = "en";
-const userLang = new Map();
 
 const texts = {
-  en: { flag: "🇺🇸", name: "English", welcomeTitle: "🌟 Welcome to Nova88 Official Bot 🌟", welcomeBody: "✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support", chooseOption: "Please choose an option 👇", langSet: "Language: English", menu: { play: "🎮 Play Now", referrals: "🧑‍🤝‍🧑 Referral", support: "🛃 Support", rewards: "🧧 Rewards", share: "🚀 Share" }},
-  zh: { flag: "🇨🇳", name: "简体中文", welcomeTitle: "🌟 欢迎来到 Nova88 官方机器人 🌟", welcomeBody: "✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服", chooseOption: "请选择操作 👇", langSet: "语言：简体中文", menu: { play: "🎮 立即游戏", referrals: "邀请返佣", support: "在线客服", rewards: "领取奖励", share: "🚀 分享" }},
-  th: { flag: "🇹🇭", name: "ไทย", welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 บอทอย่างเป็นทางการ 🌟", welcomeBody: "✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7", chooseOption: "กรุณาเลือกเมนู 👇", langSet: "ภาษาไทย", menu: { play: "🎮 เล่นเลย", referrals: "แนะนำเพื่อน", support: "ซัพพอร์ต", rewards: "รับรางวัล", share: "🚀 แชร์" }},
-  id: { flag: "🇮🇩", name: "Bahasa Indo", welcomeTitle: "🌟 Selamat Datang di Bot Resmi Nova88 🌟", welcomeBody: "✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7", chooseOption: "Silakan pilih menu 👇", langSet: "Bahasa Indonesia", menu: { play: "🎮 Main Sekarang", referrals: "Referral", support: "Dukungan", rewards: "Hadiah", share: "🚀 Bagikan" }},
-  vi: { flag: "🇻🇳", name: "Tiếng Việt", welcomeTitle: "🌟 Chào mừng đến với Bot Nova88 🌟", welcomeBody: "✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7", chooseOption: "Vui lòng chọn 👇", langSet: "Tiếng Việt", menu: { play: "🎮 Chơi Ngay", referrals: "Giới thiệu", support: "Hỗ trợ", rewards: "Phần thưởng", share: "🚀 Chia sẻ" }},
-  hi: { flag: "🇮🇳", name: "हिन्दी", welcomeTitle: "🌟 Nova88 ऑफिशियल बॉट में स्वागत है 🌟", welcomeBody: "✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट", chooseOption: "विकल्प चुनें 👇", langSet: "हिन्दी", menu: { play: "🎮 अभी खेलें", referrals: "रेफ़रल", support: "सपोर्ट", rewards: "रिवॉर्ड", share: "🚀 शेयर" }},
-  bd: { flag: "🇧🇩", name: "বাংলা", welcomeTitle: "🌟 Nova88 অফিসিয়াল বটে স্বাগতম 🌟", welcomeBody: "✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 সাপোর্ট", chooseOption: "অপশন বেছে নিন 👇", langSet: "বাংলা", menu: { play: "🎮 এখনই খেলুন", referrals: "রেফারেল", support: "সপোর্ট", rewards: "পুরস্কার", share: "🚀 শেয়ার" }}
+  en: {
+    flag: "🇺🇸", name: "English",
+    welcomeTitle: "🌟 Welcome to Nova88 – Where Winning Never Sleeps! 🌟",
+    welcomeBody: "🎉 Your Adventure Awaits:\n✅ No Registration Required\n✅ Instant Deposits & Withdrawals\n✅ 24/7 Support",
+    chooseOption: "Please choose an option 👇",
+    langSet: "Language set to English.",
+    menu: { play: "🎮 Play Now 🎮", referrals: "🧑‍🤝‍🧑 Referral", support: "🛃 Support", rewards: "🧧 Rewards", share: "🚀 Share" }
+  },
+  zh: {
+    flag: "🇨🇳", name: "简体中文",
+    welcomeTitle: "🌟 欢迎来到 Nova88 — 全天候赢不停！🌟",
+    welcomeBody: "🎉 精彩旅程即刻开启：\n✅ 无需注册，立即畅玩\n✅ 秒速存款 & 提现\n✅ 24/7 全天客服",
+    chooseOption: "请选择操作 👇",
+    langSet: "语言已切换为简体中文。",
+    menu: { play: "🎮 立即游戏 🎮", referrals: "邀请返佣", support: "在线客服", rewards: "领取奖励", share: "🚀 分享给好友" }
+  },
+  th: {
+    flag: "🇹🇭", name: "ไทย",
+    welcomeTitle: "🌟 ยินดีต้อนรับสู่ Nova88 – ชนะได้ตลอด 24 ชม.! 🌟",
+    welcomeBody: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก\n✅ ฝาก-ถอนรวดเร็ว\n✅ ซัพพอร์ต 24/7",
+    chooseOption: "กรุณาเลือกเมนู 👇",
+    langSet: "ตั้งค่าภาษาไทยแล้ว",
+    menu: { play: "🎮 เล่นเลย 🎮", referrals: "แนะนำเพื่อน", support: "ซัพพอร์ต", rewards: "รับรางวัล", share: "🚀 แชร์ให้เพื่อน" }
+  },
+  hi: {
+    flag: "🇮🇳", name: "हिन्दी",
+    welcomeTitle: "🌟 Nova88 में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
+    welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट",
+    chooseOption: "कृपया विकल्प चुनें 👇",
+    langSet: "भाषा हिंदी में सेट की गई।",
+    menu: { play: "🎮 अभी खेलें 🎮", referrals: "रेफ़रल", support: "सपोर्ट", rewards: "रिवॉर्ड", share: "🚀 शेयर करें" }
+  },
+  bd: {
+    flag: "🇧🇩", name: "বাংলা",
+    welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
+    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
+    chooseOption: "একটি অপশন বেছে নিন 👇",
+    langSet: "ভাষা বাংলা সেট করা হয়েছে।",
+    menu: { play: "🎮 এখনই খেলুন 🎮", referrals: "রেফারেল", support: "সোপোর্ট", rewards: "পুরস্কার", share: "🚀 শেয়ার করুন" }
+  },
+  id: {
+    flag: "🇮🇩", name: "Bahasa Indo",
+    welcomeTitle: "🌟 Selamat Datang di Nova88 – Kemenangan Tiada Henti! 🌟",
+    welcomeBody: "🎉 Petualangan Anda Dimulai:\n✅ Tanpa Registrasi\n✅ Deposit & WD Instan\n✅ Dukungan 24/7",
+    chooseOption: "Silakan pilih menu 👇",
+    langSet: "Bahasa diatur ke Indonesia.",
+    menu: { play: "🎮 Main Sekarang 🎮", referrals: "Referral", support: "Dukungan", rewards: "Hadiah", share: "🚀 Bagikan" }
+  },
+  vi: {
+    flag: "🇻🇳", name: "Tiếng Việt",
+    welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
+    welcomeBody: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7",
+    chooseOption: "Vui lòng chọn một tùy chọn 👇",
+    langSet: "Ngôn ngữ đã được thiết lập sang Tiếng Việt.",
+    menu: { play: "🎮 Chơi Ngay 🎮", referrals: "Giới thiệu", support: "Hỗ trợ", rewards: "Phần thưởng", share: "🚀 Chia sẻ" }
+  }
 };
+
+/**
+ * =======================
+ * 4) KEYBOARD (Optimized for 7 Languages)
+ * =======================
+ */
+function languageKeyboardRows() {
+  const order = ["en", "zh", "th", "hi", "bd", "id", "vi"];
+  const rows = [];
+  for (let i = 0; i < order.length; i += 2) {
+    const chunk = order.slice(i, i + 2).map(c => 
+      Markup.button.callback(`${texts[c].flag} ${texts[c].name}`, `lang_${c}`)
+    );
+    rows.push(chunk);
+  }
+  return rows;
+}
+
+function mainMenuKeyboard(ctx) {
+  const m = L(ctx).menu;
+  return Markup.inlineKeyboard([
+    // Fixed: WebApp buttons must receive the URL directly as a string or a specific object format
+    [Markup.button.webApp(m.play, GAME_URL)], 
+    [Markup.button.url(m.share, SHARE_URL)],
+    [
+      Markup.button.url(m.support, SUPPORT_URL),
+      Markup.button.url(m.referrals, REFERRAL_URL),
+    ],
+    [Markup.button.url(m.rewards, CHANNEL_URL)],
+    ...languageKeyboardRows(),
+  ]);
+}
 
 /**
  * =======================
