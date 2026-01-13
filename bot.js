@@ -15,13 +15,13 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-024-RESTORED";
+const BOT_VERSION = "DB-LATEST-026-MENU-FIX";
 
 const bot = new Telegraf(BOT_TOKEN);
 
 /**
  * =======================
- * 2) FULL LANGUAGE PACK
+ * 2) LANGUAGE PACK
  * =======================
  */
 const texts = {
@@ -71,12 +71,11 @@ const texts = {
 
 /**
  * =======================
- * 3) UI LOGIC (GRID RESTORED)
+ * 3) UI LOGIC 
  * =======================
  */
 
 function getCombinedGrid(lang) {
-  // Restore all rows: Play Now + Instruction + Flags
   return Markup.inlineKeyboard([
     [Markup.button.webApp(lang.play, GAME_URL)],
     [Markup.button.callback(lang.switch, "none")], 
@@ -110,19 +109,22 @@ async function sendUI(ctx, langCode = 'en') {
   const caption = `${lang.title}\n\n🆔 Member ID: <b>${user.member_id}</b>\n\n${lang.body}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
-    // Explicitly sending the inline_keyboard
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption, 
       parse_mode: 'HTML', 
       ...getCombinedGrid(lang)
     });
   } catch (err) {
-    console.error("❌ Keyboard Restore Error:", err.message);
+    console.error("❌ UI Error:", err.message);
   }
 }
 
-bot.start((ctx) => sendUI(ctx, 'en'));
+// REGISTER THE COMMAND MENU (Button beside text box)
+bot.telegram.setMyCommands([
+  { command: 'start', description: '🚀 Start Bot / Restart Menu' }
+]);
 
+bot.start((ctx) => sendUI(ctx, 'en'));
 bot.action("none", (ctx) => ctx.answerCbQuery());
 
 Object.keys(texts).forEach((code) => {
@@ -137,4 +139,4 @@ Object.keys(texts).forEach((code) => {
   });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 v24 Keyboards Restored"));
+bot.launch().then(() => console.log("✅ Nova88 v26 Menu Command Active"));
