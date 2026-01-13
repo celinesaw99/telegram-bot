@@ -9,11 +9,10 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; // Your ID from the logs
+const ADMIN_ID = 6674020266; 
 
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-// Initialize Database
 const db = new Database('nova88_users.db');
 db.prepare(`CREATE TABLE IF NOT EXISTS users (
     telegram_id TEXT PRIMARY KEY,
@@ -23,7 +22,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
-const BOT_VERSION = "DB-LATEST-014-FINAL";
+const BOT_VERSION = "DB-LATEST-015-FIXED"; // Version update to track changes
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -54,13 +53,13 @@ const texts = {
   hi: {
     label: "🇮🇳 HI",
     welcomeTitle: "🌟 Nova88 में आपका स्वागत है – जीत कभी नहीं रुकती! 🌟",
-    welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़िट और विदड्रॉ\n✅ 24/7 सपोर्ट",
+    welcomeBody: "🎉 आपका रोमांच शुरू होता है:\n✅ बिना रजिस्ट्रेशन\n✅ तुरंत डिपॉज़ิต और विदड्रॉ\n✅ 24/7 सपोर्ट",
     menu: { play: "अभी खेलें" }
   },
   bd: {
     label: "🇧🇩 BN",
-    welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
-    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
+    welcomeTitle: "🌟 Nova88-এ স্বাগতম – জয় কখনো থামে না! 🌟",
+    welcomeBody: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা\n✅ দ্রুত লেনদেন\n✅ 24/7 কাস্টমার সার্ভিস",
     menu: { play: "এখনই খেলুন" }
   },
   id: {
@@ -71,7 +70,7 @@ const texts = {
   },
   vi: {
     label: "🇻🇳 VI",
-    welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớน Mỗi Ngày! 🌟",
+    welcomeTitle: "🌟 Chào mừng đến với Nova88 – Thắng Lớn Mỗi Ngày! 🌟",
     welcomeBody: "🎉 Hành trình của bạn bắt đầu:\n✅ Không cần đăng ký\n✅ Nạp & Rút tức thì\n✅ Hỗ trợ 24/7",
     menu: { play: "Chơi Ngay" }
   }
@@ -79,7 +78,7 @@ const texts = {
 
 /**
  * =======================
- * 3) SAFE UI LOGIC
+ * 3) UI LOGIC (CRASH FIX)
  * =======================
  */
 
@@ -88,14 +87,21 @@ function L(ctx) {
   return texts[code] || texts.en;
 }
 
-function getGrid(ctx) {
+// Fixed getGrid: ONLY URL and WebApp buttons allowed on Inline Keyboard
+function getInlineGrid(ctx) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
-    [Markup.button.webApp(`🎰 🔥 ${m.play} 🔥 🎰`, GAME_URL)],
-    [Markup.button.callback("🇺🇸 EN", "lang_en"), Markup.button.callback("🇨🇳 ZH", "lang_zh"), Markup.button.callback("🇹🇭 TH", "lang_th")],
-    [Markup.button.callback("🇮🇳 HI", "lang_hi"), Markup.button.callback("🇧🇩 BN", "lang_bd"), Markup.button.callback("🇮🇩 ID", "lang_id")],
-    [Markup.button.callback("🇻🇳 VI", "lang_vi")]
+    [Markup.button.webApp(`🎰 🔥 ${m.play} 🔥 🎰`, GAME_URL)]
   ]);
+}
+
+// Reply Keyboard: Standard bottom menu allows text buttons for language
+function getReplyMenu() {
+  return Markup.keyboard([
+    ["🇺🇸 EN", "🇨🇳 ZH", "🇹🇭 TH"],
+    ["🇮🇳 HI", "🇧🇩 BN", "🇮🇩 ID"],
+    ["🇻🇳 VI"]
+  ]).resize();
 }
 
 function getOrCreateUser(tgId) {
@@ -114,11 +120,14 @@ async function sendWelcome(ctx) {
   const caption = `${t.welcomeTitle}\n\n🆔 Member ID: <b>${user.member_id}</b>\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
 
   try {
+    // 1. Send Banner with safe Inline Button
     await ctx.replyWithPhoto(BANNER_FILE, { 
       caption: caption, 
       parse_mode: 'HTML', 
-      ...getGrid(ctx) 
+      ...getInlineGrid(ctx) 
     });
+    // 2. Send Bottom Keyboard separately to avoid the 400 error crash
+    await ctx.reply("Please select your language below 👇", getReplyMenu());
   } catch (err) {
     console.error("❌ Send Error:", err.message);
   }
@@ -126,17 +135,10 @@ async function sendWelcome(ctx) {
 
 bot.start(sendWelcome);
 
-// Handle Language Switch buttons
-Object.keys(texts).forEach((code) => {
-  bot.action(`lang_${code}`, async (ctx) => {
-    try {
-        await ctx.answerCbQuery();
-        await ctx.deleteMessage(); // Clear old message to update language
-        await sendWelcome(ctx);
-    } catch (e) {
-        await sendWelcome(ctx);
-    }
-  });
+bot.on('text', async (ctx) => {
+  const text = ctx.message.text;
+  const langKey = Object.keys(texts).find(key => texts[key].label === text);
+  if (langKey) await sendWelcome(ctx);
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Final Bot Active"));
+bot.launch().then(() => console.log("✅ Nova88 Stable Bot Active: 7 Languages"));
