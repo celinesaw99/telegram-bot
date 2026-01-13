@@ -9,10 +9,10 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = 6674020266; // Your ID from logs
+const ADMIN_ID = 6674020266; // Set from your logs
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 
-// Initialize SQLite Database
+// Initialize Database
 const db = new Database('nova88_users.db');
 db.prepare(`CREATE TABLE IF NOT EXISTS users (
     telegram_id TEXT PRIMARY KEY,
@@ -85,7 +85,7 @@ const texts = {
  * =======================
  */
 
-// INLINE KEYBOARD (Attached to Photo - NO Text buttons allowed here)
+// INLINE KEYBOARD (Attached to Photo - NO Phone Button here)
 function inlineMenu(ctx, user) {
   const m = L(ctx).menu;
   return Markup.inlineKeyboard([
@@ -94,13 +94,13 @@ function inlineMenu(ctx, user) {
   ]);
 }
 
-// REPLY KEYBOARD (Standard bottom menu - Required for Phone/Contact buttons)
+// REPLY KEYBOARD (Bottom Menu - Required for Phone/Contact buttons)
 function replyMenu(user) {
   const buttons = [];
   if (!user.phone) {
     buttons.push([Markup.button.contactRequest("📱 Verify Phone Number")]);
   }
-  // 3-column abbreviated grid for languages
+  // 3-column abbreviated grid
   buttons.push(["🇺🇸 EN", "🇨🇳 ZH", "🇹🇭 TH"]);
   buttons.push(["🇮🇳 HI", "🇧🇩 BN", "🇮🇩 ID", "🇻🇳 VI"]);
   return Markup.keyboard(buttons).resize();
@@ -170,7 +170,7 @@ bot.on('text', async (ctx) => {
     // Handle Language buttons from reply keyboard
     const langEntry = Object.entries(texts).find(([code, val]) => val.label === text);
     if (langEntry) {
-        await ctx.reply(`Language selected: ${text}`);
+        await ctx.reply(`Language updated to ${text}`);
         return sendWelcome(ctx);
     }
 });
@@ -184,4 +184,7 @@ bot.command('admin_report', (ctx) => {
     ctx.reply(report, { parse_mode: 'HTML' });
 });
 
-bot.launch().then(() => console.log("✅ Nova88 Bot Online and Fixed"));
+bot.launch().then(() => console.log("✅ Nova88 Database Bot Active: 7 Languages"));
+
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
