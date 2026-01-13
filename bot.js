@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Telegraf, Markup } = require("telegraf");
+const { Telegraf, Markup, Input } = require("telegraf");
 const path = require("path");
 const Database = require('better-sqlite3');
 
@@ -9,7 +9,16 @@ const Database = require('better-sqlite3');
  * =======================
  */
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_IDS = [6674020266, 1382562949, 8469468119, 6256931897, 1264629047 ]; 
+
+// UPDATED ADMIN LIST
+const ADMIN_IDS = [
+  6674020266,
+  1382562949,
+  1264629047,
+  6256931897,
+  8469468119
+]; 
+
 const CHANNEL_USERNAME = "@Nova88_News"; 
 
 if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
@@ -51,7 +60,7 @@ const texts = {
     title: "🌟 欢迎来到 Nova88 在线赌场 — 全天候赢不停！🌟",
     body: "🎉 精彩旅程即刻开启：\n✅ 无需注册 – 立即畅玩！\n✅ 秒速存款 & 提现 – 极速提款！\n\n🗞️ 最新动态: @Nova88_News\n🎁 促销奖励: @Nova_Promotion",
     play: "🎰 🔥 立即游戏，赢取大奖 🔥 🎰",
-    shareCTA: "🚀 分享好友赚 🚀",
+    shareCTA: "🚀 分享赚奖励 🚀",
     live: "🎧 在线客服",
     gift: "🎁 领取奖励",
     shareMsg: "嘿！快来加入 Nova88。使用我的链接即可获得即时奖励："
@@ -61,7 +70,7 @@ const texts = {
     title: "🌟 ยินดีต้อนรับสู่ Nova88 คาสิโนออนไลน์ – ชนะได้ตลอด 24 ชม.! 🌟",
     body: "🎉 เริ่มเล่นได้เลย:\n✅ ไม่ต้องสมัครสมาชิก!\n✅ ฝาก-ถอนรวดเร็ว!\n\n🗞️ อัปเดตล่าสุด: @Nova88_News\n🎁 โปรโมชั่น: @Nova_Promotion",
     play: "🎰 🔥 เล่นเลยตอนนี้และรับรางวัล 🔥 🎰",
-    shareCTA: "🚀 แชร์และรับ 🚀",
+    shareCTA: "🚀 แชร์และรับรางวัล 🚀",
     live: "🎧 สนับสนุน",
     gift: "🎁 รับรางวัล",
     shareMsg: "เฮ้! มาร่วมสนุกกับฉันที่ Nova88: "
@@ -81,7 +90,7 @@ const texts = {
     title: "🌟 Nova88 অনলাইন ক্যাসিনোতে স্বাগতম! 🌟",
     body: "🎉 খেলা শুরু করুন:\n✅ রেজিস্ট্রেশন ছাড়াই খেলা!\n✅ দ্রুত লেনদেন!\n\n🗞️ আপডেট: @Nova88_News\n🎁 অফার: @Nova_Promotion",
     play: "🎰 🔥 এখনই খেলুন এবং জিতুন 🔥 🎰",
-    shareCTA: "🚀 শেয়ার করুন এবং ১% আয় করুন 🚀",
+    shareCTA: "🚀 শেয়ার করুন এবং আয় করুন 🚀",
     live: "🎧 সাপোর্ট",
     gift: "🎁 পুরস্কার",
     shareMsg: "হেই! Nova88-এ আমার সাথে যোগ দিন: "
@@ -101,7 +110,7 @@ const texts = {
     title: "🌟 Chào mừng đến với Sòng bạc Trực tuyến Nova88! 🌟",
     body: "🎉 Hành trình bắt đầu:\n✅ Không cần đăng ký!\n✅ Nạp & Rút tức thì!\n\n🗞️ Cập nhật: @Nova88_News\n🎁 Khuyến mãi: @Nova_Promotion",
     play: "🎰 🔥 CHƠI NGAY & THẮNG LỚN 🔥 🎰",
-    shareCTA: "🚀 CHIA SẺ & NHẬN 🚀",
+    shareCTA: "🚀 CHIA SẺ & NHẬN THƯỞNG 🚀",
     live: "🎧 Hỗ trợ",
     gift: "🎁 Thưởng",
     shareMsg: "Chào! Hãy tham gia cùng tôi trên Nova88: "
@@ -110,7 +119,7 @@ const texts = {
 
 /**
  * =======================
- * 3) CORE UI LOGIC
+ * 3) CORE LOGIC & UI
  * =======================
  */
 
@@ -138,10 +147,8 @@ function getCombinedGrid(lang, tgId) {
   const shareUrl = `https://t.me/${bot.botInfo.username}?start=${tgId}`;
   return Markup.inlineKeyboard([
     [Markup.button.webApp(lang.play, GAME_URL)],
-
     [Markup.button.switchToChat(lang.shareCTA, `${lang.shareMsg}${shareUrl}`)],
     [
-    
       Markup.button.url(lang.live, SUPPORT_URL),
       Markup.button.url(lang.gift, REWARDS_URL)
     ],
@@ -175,7 +182,7 @@ async function sendUI(ctx, langCode = 'en') {
 
 /**
  * =======================
- * 4) HANDLERS
+ * 4) COMMANDS & ACTIONS
  * =======================
  */
 
@@ -195,12 +202,22 @@ bot.start(async (ctx) => {
   return sendUI(ctx, 'en');
 });
 
+// CSV REPORT COMMAND FOR ADMINS
 bot.command('admin_report', async (ctx) => {
     if (!ADMIN_IDS.includes(ctx.from.id)) return;
     try {
-        const total = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
-        await ctx.reply(`📊 **Nova88 Admin Report**\nTotal Users: ${total}`, { parse_mode: 'Markdown' });
-        await ctx.replyWithDocument({ source: './nova88_users.db' }, { caption: "📂 User Database" });
+        const rows = db.prepare('SELECT * FROM users').all();
+        if (rows.length === 0) return await ctx.reply("📊 Database is empty.");
+
+        const headers = "Telegram ID,Member ID,Referred By,Referral Count,Join Date\n";
+        const csvString = headers + rows.map(row => 
+            `${row.telegram_id},${row.member_id},${row.referred_by || 'None'},${row.referral_count},${row.join_date}`
+        ).join("\n");
+
+        await ctx.replyWithDocument(
+            Input.fromBuffer(Buffer.from(csvString), 'nova88_report.csv'),
+            { caption: `📊 **Nova88 Report**\nTotal Users: ${rows.length}`, parse_mode: 'Markdown' }
+        );
     } catch (err) { await ctx.reply("❌ Error: " + err.message); }
 });
 
@@ -222,4 +239,4 @@ bot.action(/lang_(.+)/, async (ctx) => {
 });
 
 bot.telegram.setMyCommands([{ command: 'start', description: '🚀 Open Nova88 Menu' }]);
-bot.launch().then(() => console.log("✅ Nova88 v36 Online - Multi-Admin & Language Pack Active"));
+bot.launch().then(() => console.log("✅ Nova88 v37 Final Build (Multi-Admin) Active"));
