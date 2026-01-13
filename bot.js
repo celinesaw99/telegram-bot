@@ -24,7 +24,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
 )`).run();
 
 // Updated GAME_URL with H5 forcing parameter
-const GAME_URL = "https://m.nova8805.net/en?affCode=21093&view=h5"; 
+const GAME_URL = "https://m.nova8805.net/en?affCode=21093&view=h5&platform=mobile";
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
 const REWARDS_URL = "https://t.me/Nova88_events";
 const BANNER_FILE = { source: path.join(__dirname, "images", "welcomebot.jpg") };
