@@ -14,7 +14,7 @@ if (!BOT_TOKEN) throw new Error("❌ BOT_TOKEN missing in .env");
 const GAME_URL = "https://m.nova8805.net/en?affCode=21093";
 const REFERRAL_URL = "https://m.nova88805.net/cs/join?AffId=6bl3wx9q";
 const SUPPORT_URL = "https://direct.lc.chat/11638088/";
-const CHANNEL_URL = "https://t.me/Nova_Promotion"; 
+const CHANNEL_URL = "https://t.me/Nova_Promotion";
 const BOT_USERNAME = "Nova88OfficialBot"; // Change to your actual username
 
 // Sharing Logic
@@ -97,14 +97,20 @@ function mainMenuKeyboard(ctx) {
 async function sendWelcome(ctx) {
   const t = L(ctx);
   const caption = `${t.welcomeTitle}\n\n${t.welcomeBody}\n\n🧩 Version: ${BOT_VERSION}`;
-  try {
-    await ctx.replyWithPhoto(BANNER_FILE, { caption });
-  } catch (err) {
-    await ctx.reply(caption);
-  }
-  await ctx.reply(t.chooseOption, mainMenuKeyboard(ctx));
-}
 
+  try {
+    // You must pass the caption and buttons in one 'extra' object
+    await ctx.replyWithPhoto(BANNER_FILE, { 
+      caption: caption,
+      parse_mode: 'HTML',
+      ...mainMenuKeyboard(ctx) // This inserts your buttons correctly
+    });
+  } catch (err) {
+    // If the photo or keyboard fails, it will log the EXACT error here
+    console.error("❌ Telegram Error:", err.description || err.message);
+    await ctx.reply(caption, mainMenuKeyboard(ctx));
+  }
+}
 bot.start(sendWelcome);
 
 Object.keys(texts).forEach((code) => {
